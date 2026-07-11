@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Competitor Analysis — Aesthetic Clinics Competitor Intelligence Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+@media print {
+  .dp-card,
+  .leader-card,
+  .insight-card,
+  .chart-card,
+  .table-card,
+  .kpi-card,
+  .competitor-row,
+  .audience-row,
+  .promo-row,
+  .section-header {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  
+  h1, h2, h3, h4 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  
+  .section-header + * {
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+  }
+  
+  /* Keep deep profile cards together */
+  .deep-profile,
+  [class*="dp-"] {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+
+/* Also apply outside of print, since some PDF renderers don't honor @media print */
+.dp-card,
+.leader-card,
+.insight-card,
+.chart-card,
+.table-card,
+.kpi-card,
+.deep-profile {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.dp-svg-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.dp-svg-row svg{flex-shrink:0;width:clamp(70px,25%,110px);height:auto}
+canvas{max-width:100%!important;display:block}
+body,.wrap{overflow-x:hidden}
+.data-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.chart-card{min-width:0;overflow:hidden}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#0d1b2a;--ink2:#1a2d42;--slate:#3d5470;--mist:#7a93ad;--fog:#b0c4d4;
+  --smoke:#d8e4ed;--cloud:#eef3f8;--off:#f6f9fc;--white:#fff;
+  --gold:#b8922a;--goldl:#fdf6e3;--goldm:#e8d28a;--goldd:#9a7620;
+  --teal:#0e6b63;--teall:#ebf8f6;--tealm:#8ed5cc;
+  --red:#c0392b;--redl:#fdf0ef;
+  --green:#1a7a4a;--greenl:#ebf8f1;
+  --blue:#185fa5;--bluel:#e6f1fb;
+  --r:8px;--rlg:12px;--rxl:16px;
+  --fhead:'Playfair Display',Georgia,serif;
+  --fbody:'DM Sans',system-ui,sans-serif;
+  --fth:'Prompt','DM Sans',sans-serif;
+  --max:980px;
+}
+html{font-size:13px}
+body{font-family:var(--fbody);background:var(--cloud);color:var(--ink2);-webkit-font-smoothing:antialiased;line-height:1.6}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 12px}
+.cover{background:var(--ink);color:#fff;overflow:hidden;position:relative}
+.cover-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.cover-glow{position:absolute;top:-60px;right:-40px;width:320px;height:320px;background:radial-gradient(ellipse,rgba(184,146,42,.18) 0%,transparent 65%);pointer-events:none}
+.cover-inner{position:relative;z-index:1;padding:32px 24px 28px}
+.cover-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:16px}
+.cover-badge-line{width:24px;height:2px;background:var(--gold)}
+.cover-badge-text{font-size:9px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold)}
+.cover h1{font-family:var(--fhead);font-size:32px;font-weight:700;line-height:1.05;letter-spacing:-.5px;color:#fff;margin-bottom:6px}
+.cover h1 span{color:rgba(255,255,255,.35);display:block;font-size:17px;font-weight:400;margin-top:4px;letter-spacing:0}
+.cover-meta{display:flex;flex-wrap:wrap;gap:20px;margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1)}
+.cover-meta-item{display:flex;flex-direction:column;gap:2px}
+.cover-meta-label{font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.cover-meta-value{font-size:12px;font-weight:500;color:rgba(255,255,255,.8)}
+.cover-strip{background:var(--ink2);border-top:1px solid rgba(255,255,255,.07);padding:10px 24px;display:flex;gap:10px;flex-wrap:wrap}
+.cover-strip-tag{font-size:10px;font-weight:500;color:rgba(255,255,255,.45);background:rgba(255,255,255,.06);padding:3px 10px;border-radius:20px}
+.layer-hdr{margin:20px 0 12px;padding:14px 20px;border-left:3px solid var(--gold);background:var(--white);border-radius:0 var(--r) var(--r) 0;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.layer-hdr-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mist);margin-bottom:3px}
+.layer-hdr-title{font-family:var(--fhead);font-size:20px;font-weight:700;color:var(--ink);line-height:1.1}
+.layer-hdr-sub{font-size:11px;color:var(--mist);margin-top:2px}
+.section{background:var(--white);border-radius:var(--rlg);box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden}
+.section-hdr{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--smoke)}
+.section-hdr-txt{display:flex;flex-direction:column;gap:1px}
+.section-title{font-size:13px;font-weight:600;color:var(--ink)}
+.section-title-th{font-family:var(--fth);font-size:11px;font-weight:400;color:var(--mist)}
+.section-body{padding:16px 18px}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--off);border-radius:var(--r);padding:14px 16px;border:1px solid var(--smoke)}
+.kpi-val{font-family:var(--fhead);font-size:28px;font-weight:700;color:var(--ink);line-height:1}
+.kpi-label{font-size:10px;font-weight:600;color:var(--mist);text-transform:uppercase;letter-spacing:.8px;margin-top:4px}
+.kpi-sub{font-size:11px;color:var(--slate);margin-top:2px}
+.kpi.gold .kpi-val{color:var(--gold)}
+.kpi.teal .kpi-val{color:var(--teal)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.chart-card{background:var(--off);border:1px solid var(--smoke);border-radius:var(--r);padding:14px}
+.chart-card-title{font-size:11px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.chart-card-sub{font-family:var(--fth);font-size:10px;color:var(--mist);margin-bottom:10px}
+.chart-card-icon-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:2px}
+.chart-card-icon-box{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+.insight-row-v2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.insight-card-v2{border-radius:var(--rlg);padding:16px;border:1px solid;background:var(--white);display:flex;flex-direction:column;gap:10px}
+.insight-card-v2.c-blue{border-color:#b5d4f4;background:#f0f6fe}
+.insight-card-v2.c-teal{border-color:var(--tealm);background:var(--teall)}
+.insight-card-v2.c-purple{border-color:#c9b1f0;background:#f5f0fd}
+.insight-card-v2-hdr{display:flex;align-items:center;gap:10px}
+.insight-card-v2-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.c-blue .insight-card-v2-icon{background:var(--blue)}
+.c-teal .insight-card-v2-icon{background:var(--teal)}
+.c-purple .insight-card-v2-icon{background:#7c3aed}
+.insight-card-v2-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:2px}
+.c-blue .insight-card-v2-label{color:var(--blue)}
+.c-teal .insight-card-v2-label{color:var(--teal)}
+.c-purple .insight-card-v2-label{color:#7c3aed}
+.insight-card-v2-title{font-size:14px;font-weight:700;color:var(--ink);line-height:1.2}
+.insight-card-v2-body{font-size:11px;color:var(--ink2);line-height:1.55;border-top:1px solid rgba(0,0,0,.07);padding-top:10px}
+.insight-bullet-v2{display:flex;gap:6px;margin-bottom:6px;align-items:flex-start}
+.insight-bullet-v2:last-child{margin-bottom:0}
+.insight-bullet-arrow{font-size:11px;flex-shrink:0;margin-top:1px;color:var(--mist);font-weight:600}
+/* narrative styles removed */
+.data-table{width:100%;border-collapse:collapse;font-size:11px}
+.data-table th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.data-table th:first-child{border-radius:var(--r) 0 0 0}
+.data-table th:last-child{border-radius:0 var(--r) 0 0}
+.data-table td{padding:9px 12px;border-bottom:1px solid var(--smoke);vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--off)}
+.data-table tr:nth-child(even) td{background:rgba(238,243,248,.4)}
+.td-name{font-weight:600;color:var(--ink)}
+.fb-link{font-size:10px;color:var(--blue);text-decoration:none}
+.fb-link:hover{text-decoration:underline}
+.ad-bar-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--smoke)}
+.ad-bar-row:last-child{border-bottom:none}
+.ad-bar-name{width:clamp(80px,22%,200px);min-width:80px;font-size:11px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-bar-track{flex:1;height:18px;background:var(--off);border-radius:4px;overflow:hidden;position:relative}
+.ad-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px;font-size:10px;font-weight:700;color:#fff}
+.ad-bar-fill.gold{background:var(--gold)}.ad-bar-fill.blue{background:var(--blue)}.ad-bar-fill.teal{background:var(--teal)}.ad-bar-fill.mist{background:var(--mist)}.ad-bar-fill.fog{background:var(--fog)}
+.ad-bar-count{width:28px;text-align:right;font-size:11px;font-weight:700;color:var(--ink)}
+.leader-v2-wrap{display:grid;grid-template-columns:1.8fr 1fr;min-height:0}
+.leader-v2-main{display:flex;flex-direction:column}
+.leader-v2-header{background:var(--ink);padding:20px 22px 16px}
+.leader-v2-badge{display:inline-flex;align-items:center;gap:5px;background:var(--gold);color:#fff;font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.leader-v2-name{font-family:var(--fhead);font-size:24px;font-weight:700;color:#fff;line-height:1.1;margin-bottom:5px}
+.leader-v2-tier-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.leader-v2-tier-text{font-size:11px;color:rgba(255,255,255,.55)}
+.leader-v2-accel{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#f5a623;background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.3);padding:2px 8px;border-radius:20px}
+.leader-v2-stats{display:flex;gap:0}
+.leader-v2-stat{flex:1;background:rgba(255,255,255,.07);border-radius:8px;padding:10px 12px;margin-right:6px;text-align:center}
+.leader-v2-stat:last-child{margin-right:0}
+.leader-v2-stat-val{font-family:var(--fhead);font-size:22px;font-weight:700;color:var(--gold);line-height:1}
+.leader-v2-stat-label{font-size:8px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-top:4px}
+.leader-v2-body{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--smoke)}
+.leader-v2-section-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mist);margin-bottom:8px}
+.leader-v2-pills{display:flex;flex-wrap:wrap;gap:6px}
+.leader-v2-pill{font-size:10px;font-weight:600;padding:4px 12px;border-radius:20px;background:var(--bluel);color:var(--blue);border:1px solid #b5d4f4}
+.leader-v2-bullets{display:flex;flex-direction:column;gap:6px}
+.leader-v2-bullet{display:flex;gap:7px;font-size:11px;color:var(--ink2);line-height:1.45;align-items:flex-start}
+.leader-v2-bullet-arrow{color:var(--teal);flex-shrink:0;font-weight:700;margin-top:1px}
+.leader-v2-standout{background:var(--goldl);border-top:2px solid var(--goldm);padding:10px 22px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--goldd);font-weight:500;line-height:1.4}
+.leader-v2-challengers{background:var(--white);display:flex;flex-direction:column;border-left:1px solid var(--smoke)}
+.leader-v2-chal-hdr{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mist);padding:16px 18px 4px}
+.leader-v2-chal-list{display:flex;flex-direction:column;flex:1;padding-bottom:8px}
+.leader-v2-chal-item{padding:14px 18px;border-bottom:1px solid var(--smoke);position:relative}
+.leader-v2-chal-item:last-child{border-bottom:none}
+.leader-v2-chal-name-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.leader-v2-chal-name{font-size:12px;font-weight:700;color:var(--ink)}
+.leader-v2-chal-ads{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--bluel);color:var(--blue);border:1px solid #b5d4f4}
+.leader-v2-chal-usp{font-size:11px;color:var(--slate);line-height:1.45}
+.dp-card{background:var(--white);border:1px solid var(--smoke);border-radius:var(--rlg);overflow:hidden;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.dp-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--smoke);background:var(--off)}
+.dp-name{font-family:var(--fhead);font-size:16px;font-weight:700;color:var(--ink)}
+.dp-threat{display:flex;align-items:center;gap:8px}
+.dp-threat-badge{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.dp-threat-badge.high{background:var(--redl);color:var(--red)}
+.dp-threat-badge.medium{background:var(--goldl);color:var(--goldd)}
+.dp-threat-badge.low{background:var(--greenl);color:var(--green)}
+.dp-threat-badge.minimal{background:var(--smoke);color:var(--mist)}
+.dp-vis-row{display:flex;flex-wrap:wrap;gap:6px;padding:10px 16px;background:var(--off);border-bottom:1px solid var(--smoke);align-items:center}
+.dp-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.3px}
+.dp-chip.ads{background:var(--goldl);color:var(--goldd);border:1px solid var(--goldm)}
+.dp-chip.posts{background:var(--teall);color:var(--teal);border:1px solid var(--tealm)}
+.dp-chip.tier{background:var(--bluel);color:var(--blue);border:1px solid #b5d4f4}
+.dp-chip.cta{background:var(--cloud);color:var(--slate);border:1px solid var(--smoke)}
+.dp-chip-sep{width:1px;height:16px;background:var(--smoke);margin:0 2px}
+.dp-table{width:100%;border-collapse:collapse;font-size:11px}
+.dp-table td{padding:9px 14px;border-bottom:1px solid var(--smoke);vertical-align:top}
+.dp-table tr:last-child td{border-bottom:none}
+.dp-table tr:hover td{background:var(--off)}
+.dp-table td:first-child{font-weight:600;color:var(--ink);width:clamp(90px,18%,140px);white-space:nowrap;background:rgba(238,243,248,.3)}
+.dp-table td:last-child{color:var(--ink2)}
+.dp-charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:12px}
+.hbar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.hbar-row:last-child{margin-bottom:0}
+.hbar-label{font-size:11px;font-weight:500;color:var(--ink);width:clamp(100px,30%,160px);flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{flex:1;height:22px;background:var(--cloud);border-radius:5px;overflow:hidden;position:relative}
+.hbar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#FFD700;min-width:0;transition:width .4s ease}
+.hbar-val{font-size:11px;font-weight:700;width:40px;text-align:right;flex-shrink:0}
+.post-bar-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--smoke)}
+.post-bar-row:last-child{border-bottom:none}
+.post-bar-name{width:clamp(80px,22%,200px);font-size:11px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.post-bar-track{flex:1;height:14px;background:var(--off);border-radius:3px;overflow:hidden}
+.post-bar-fill{height:100%;background:var(--teal);border-radius:3px;display:flex;align-items:center;padding-left:5px;font-size:9px;font-weight:700;color:#fff}
+.post-bar-count{width:24px;text-align:right;font-size:11px;font-weight:600;color:var(--teal)}
+.pulse-grid{display:grid;grid-template-columns:3fr 1fr;gap:14px}
+.postcats-chart-wrap{position:relative;height:clamp(160px,30vw,260px);margin-top:8px}
+.aud-panel{background:var(--off);border:1px solid var(--smoke);border-radius:var(--rlg);padding:18px 20px}
+.aud-panel-title{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--smoke)}
+.aud-panel-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block}
+.intel-aud-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.intel-aud-row:last-child{margin-bottom:0}
+.intel-aud-label{font-size:11.5px;font-weight:500;color:var(--ink2);width:clamp(80px,20%,110px);flex-shrink:0}
+.intel-aud-track{flex:1;height:12px;background:var(--smoke);border-radius:6px;overflow:hidden}
+.intel-aud-fill{height:100%;border-radius:6px;transition:width .4s ease}
+.intel-aud-val{font-size:12px;font-weight:700;width:32px;text-align:right;flex-shrink:0}
+.intel-aud-count{font-size:10px;color:var(--mist);width:40px;text-align:right;flex-shrink:0}
+.intel-promo-row{margin-bottom:14px}.intel-promo-row:last-child{margin-bottom:0}
+.intel-promo-top{display:flex;align-items:center;gap:10px;margin-bottom:3px}
+.intel-promo-name{font-size:11.5px;font-weight:500;color:var(--ink2);width:clamp(80px,22%,130px);flex-shrink:0}
+.intel-promo-track{flex:1;height:22px;background:var(--smoke);border-radius:5px;overflow:hidden}
+.intel-promo-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:9px;font-size:10px;font-weight:700;color:#fff;min-width:36px;white-space:nowrap}
+.intel-promo-ct{font-size:10px;color:var(--mist);width:50px;text-align:right;flex-shrink:0;font-style:italic}
+.intel-promo-example{font-size:10px;color:var(--mist);font-style:italic;padding-left:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;line-height:1.4}
+.intel-tag-row{display:flex;flex-wrap:wrap;gap:6px;padding-top:12px;border-top:1px solid var(--smoke);margin-top:14px}
+.intel-tag{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid transparent}
+.chart-names{display:flex;flex-wrap:wrap;gap:4px 5px;margin-top:5px;margin-bottom:10px;padding:2px 0}
+.names-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:11px}
+.names-table thead tr{background:#eaf1fb}
+.names-table thead th{padding:7px 10px;text-align:left;font-size:10px;font-weight:700;color:#154d8a;text-transform:uppercase;letter-spacing:.6px;border-bottom:2px solid #c8d9ef}
+.names-table tbody tr{border-bottom:1px solid #e8eff8}
+.names-table tbody tr:last-child{border-bottom:none}
+.names-table tbody tr:hover{background:#f4f8fd}
+.names-table td{padding:6px 10px;vertical-align:middle}
+.names-table td.nt-label{font-size:10.5px;font-weight:600;color:#154d8a;white-space:nowrap;text-transform:capitalize;width:1%;padding-right:14px}
+.names-table td.nt-tags{display:flex;flex-wrap:wrap;gap:4px;border:none;padding:5px 10px}
+.chart-name-tag{font-size:9px;font-weight:700;color:var(--ink);background:var(--cloud);border:1px solid var(--smoke);padding:1px 7px;border-radius:10px;white-space:nowrap;line-height:1.5}
+.chart-name-pill{font-size:9.5px;font-weight:600;color:#1e293b;padding:2px 9px;border-radius:12px;white-space:nowrap;line-height:1.6;letter-spacing:.1px}
+.intel-two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+@media print{.page-break{page-break-before:always}.section{box-shadow:none}}
+@media(max-width:900px){.pulse-grid{grid-template-columns:2fr 1fr}.leader-v2-wrap{grid-template-columns:1fr}.ad-bar-name{width:140px;min-width:140px}.post-bar-name{width:140px}.intel-aud-label{width:90px}.intel-promo-name{width:100px}.intel-promo-example{padding-left:110px}}
+@media(max-width:700px){.kpi-row{grid-template-columns:repeat(2,1fr)}.two-col,.three-col,.insight-row,.leader-grid,.pulse-grid,.intel-two-col{grid-template-columns:1fr}.leader-v2-wrap{grid-template-columns:1fr}.insight-row-v2{grid-template-columns:1fr}.ad-bar-name{width:32vw;min-width:80px;font-size:10px}.post-bar-name{width:32vw;min-width:80px;font-size:10px}.intel-aud-label{width:80px;font-size:10.5px}.intel-aud-count{display:none}.intel-promo-name{width:80px;font-size:10.5px}.intel-promo-example{padding-left:0}.dp-table td:first-child{width:auto;min-width:90px;white-space:normal}.postcats-chart-wrap{height:180px!important}.hbar-label{width:clamp(90px,28%,140px);font-size:10px}.hbar-track{height:18px}.hbar-fill{font-size:9px;padding-left:5px}.hbar-val{font-size:10px;width:34px}.names-table{font-size:10px}.names-table thead th{padding:6px 8px;font-size:9px;letter-spacing:.3px}.names-table td{padding:5px 8px}.names-table td.nt-label{white-space:normal;width:auto;max-width:38vw;word-break:break-word;padding-right:8px}.chart-name-tag{font-size:8.5px;padding:1px 6px}}
+@media(max-width:480px){.dp-charts-grid{grid-template-columns:1fr!important}.section-body{padding:12px 12px}.dp-header{flex-wrap:wrap;gap:6px}.dp-vis-row{gap:4px}.dp-chip{font-size:9px;padding:2px 7px}.names-table td.nt-label{max-width:32vw;font-size:9.5px}.chart-name-tag{font-size:8px;padding:1px 5px}.postcats-chart-wrap{height:200px!important}}
+@media(max-width:400px){.kpi-row{grid-template-columns:1fr 1fr}.kpi-val{font-size:22px}.cover h1{font-size:24px}.dp-name{font-size:13px}}
+
+.cwa-section{background:var(--white);border-radius:var(--rlg);box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:14px;overflow:hidden}
+.cwa-header{background:linear-gradient(135deg,#0d1b2a 0%,#1a3a5c 100%);padding:20px 22px;display:flex;align-items:center;gap:14px}
+.cwa-header-icon{width:44px;height:44px;border-radius:12px;background:rgba(184,146,42,.2);border:1px solid rgba(184,146,42,.3);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.cwa-header-text h3{font-family:var(--fhead);font-size:18px;font-weight:700;color:#fff;margin-bottom:2px}
+.cwa-header-text p{font-size:11px;color:rgba(255,255,255,.5)}
+.cwa-overall{background:var(--goldl);border-left:4px solid var(--gold);padding:14px 20px;font-size:12px;color:var(--goldd);font-weight:500;line-height:1.5}
+.cwa-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px}
+.cwa-card{background:var(--off);border:1px solid var(--smoke);border-radius:var(--rlg);padding:16px;display:flex;flex-direction:column;gap:8px}
+.cwa-card.full-width{grid-column:1/-1}
+.cwa-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);display:flex;align-items:center;gap:6px}
+.cwa-card-title-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff}
+.cwa-stat-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.cwa-stat{background:var(--white);border:1px solid var(--smoke);border-radius:8px;padding:8px 12px;display:flex;flex-direction:column;align-items:center;flex:1;min-width:70px}
+.cwa-stat-val{font-family:var(--fhead);font-size:20px;font-weight:700;line-height:1}
+.cwa-stat-val.red{color:var(--red)}
+.cwa-stat-val.gold{color:var(--gold)}
+.cwa-stat-val.teal{color:var(--teal)}
+.cwa-stat-label{font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--mist);margin-top:3px;text-align:center}
+.cwa-bullet{display:flex;gap:7px;font-size:11px;color:var(--ink2);line-height:1.5;align-items:flex-start;margin-bottom:5px}
+.cwa-bullet:last-child{margin-bottom:0}
+.cwa-bullet-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:5px}
+.cwa-card.quickwins .cwa-bullet-dot{background:var(--teal)}
+.cwa-card.quickwins{background:var(--teall);border-color:var(--tealm)}
+.cwa-card.quickwins .cwa-card-title{color:var(--teal)}
+@media(max-width:700px){.cwa-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<script>
+const REPORT_DATA_PLACEHOLDER = {"kpis":{"total_ads":47,"total_posts":59,"total_competitors":10,"active_advertisers":5,"inactive_advertisers":5,"market_concentration":"high","avg_ads_per_competitor":4.3,"total_active_ads":47,"active_pct":50},"meta":{"market":"Thailand (TH)","industry":"Aesthetic Clinics","run_date":"2026-06-08","total_ads":47,"total_posts":59,"report_title":"Aesthetic Clinics Competitor Intelligence Report","total_competitors":10,"analysis_confidence":"Market is highly concentrated with LBC Clinic holding 53% of all paid ads (25/47); 6 of 11 competitors show zero paid ad activity.","title":"Aesthetic Clinics Competitor Intelligence Report","subtitle":"Aesthetic Clinics · Paid Ads + Organic Posts Analysis","date":"June 2026","region":"Thailand (TH)","analyst":"","data_source":"Meta Ad Library + Facebook Pages","competitors_count":10},"charts":{"ad_volume":[{"ads":25,"name":"LBC Clinic เลอบิวทิส"},{"ads":13,"name":"Gangnam Clinic"},{"ads":5,"name":"Class Clinic คลาสคลินิก"},{"ads":2,"name":"Emma Clinic Intl."},{"ads":2,"name":"V Square Clinic"}],"post_volume":[{"name":"Aura Bangkok Clinic","posts":11},{"name":"SLC Clinic","posts":10},{"name":"THE KLINIQUE","posts":9},{"name":"Class Clinic คลาสคลินิก","posts":8},{"name":"Emma Clinic Intl.","posts":7},{"name":"Gangnam Clinic","posts":6},{"name":"Meko Hospital โรงพยาบาล เมโกะ","posts":4},{"name":"LBC Clinic เลอบิวทิส","posts":3},{"name":"V Square Clinic","posts":1}],"post_formats":[{"name":"Reel","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":8,"weighted_total":6},{"name":"Image","names":["SLC Clinic","Gangnam Clinic","THE KLINIQUE","Aura Bangkok Clinic","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":6,"weighted_total":3.4},{"name":"Text","names":["SLC Clinic","Aura Bangkok Clinic","V Square Clinic"],"competitors":3,"weighted_total":0.8},{"name":"Carousel","names":["Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE"],"competitors":3,"weighted_total":0.8},{"name":"Video","names":["THE KLINIQUE","Emma Clinic Intl."],"competitors":2,"weighted_total":0.8}],"ads_cta_types":[{"name":"LINE","count":1,"competitors":1},{"name":"Messenger","count":1,"competitors":1}],"price_signals":[{"signal":"ราคาไม่แรงแต่แพงที่ความสวย","competitor":"LBC Clinic เลอบิวทิส"},{"signal":"11,990 THB / 6CC","competitor":"LBC Clinic เลอบิวทิส"},{"signal":"14,990 THB UltraGio","competitor":"LBC Clinic เลอบิวทิส"},{"signal":"FREE trial + 49 THB mask upsell","competitor":"Gangnam Clinic"},{"signal":"99 THB first session","competitor":"Gangnam Clinic"},{"signal":"1,999 THB buy-1-get-2 filler","competitor":"Gangnam Clinic"},{"signal":"1,999 THB new customer price","competitor":"Gangnam Clinic"},{"signal":"5,990 THB stated","competitor":"Class Clinic คลาสคลินิก"},{"signal":"790 THB stated","competitor":"Class Clinic คลาสคลินิก"},{"signal":"7,900 - 50,000 บาท","competitor":"Emma Clinic Intl."},{"signal":"7,490/CC explicit price","competitor":"V Square Clinic"},{"signal":"volume threshold (2CC/3CC) for free gift","competitor":"V Square Clinic"}],"post_categories":[{"name":"influencer collaborations","names":["SLC Clinic","Gangnam Clinic","THE KLINIQUE","Aura Bangkok Clinic"],"competitors":4,"weighted_total":2.4},{"name":"promotions & discounts","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl."],"competitors":6,"weighted_total":2},{"name":"procedure explanations (filler/botox/surgery)","names":["SLC Clinic","Gangnam Clinic","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":6,"weighted_total":1.8},{"name":"before/after transformations","names":["SLC Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":4,"weighted_total":1.6},{"name":"customer reviews","names":["SLC Clinic","LBC Clinic เลอบิวทิส","Class Clinic คลาสคลินิก","V Square Clinic"],"competitors":4,"weighted_total":1.2},{"name":"facial treatments","names":["Gangnam Clinic","Aura Bangkok Clinic","Class Clinic คลาสคลินิก"],"competitors":3,"weighted_total":1},{"name":"educational content (skin & beauty)","names":["SLC Clinic","LBC Clinic เลอบิวทิส"],"competitors":2,"weighted_total":0.6},{"name":"clinic tour & branches","names":["THE KLINIQUE","Aura Bangkok Clinic","Class Clinic คลาสคลินิก"],"competitors":3,"weighted_total":0.6},{"name":"korean beauty trends","names":["SLC Clinic","Gangnam Clinic"],"competitors":2,"weighted_total":0.4},{"name":"doctor branding","names":["SLC Clinic"],"competitors":1,"weighted_total":0.2}],"posts_cta_types":[{"name":"LINE","names":["Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":7,"weighted_total":5.6},{"name":"Phone","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ"],"competitors":7,"weighted_total":3},{"name":"DM","names":["THE KLINIQUE"],"competitors":1,"weighted_total":0.2}],"hook_distribution":[{"hook":"social_proof","names":["LBC Clinic เลอบิวทิส","Emma Clinic Intl."],"total":10.9,"competitors":2},{"hook":"price_anchor","names":["Gangnam Clinic"],"total":10.4,"competitors":1},{"hook":"education","names":["LBC Clinic เลอบิวทิส"],"total":7.1,"competitors":1},{"hook":"promotion","names":["LBC Clinic เลอบิวทิส","V Square Clinic"],"total":5.6,"competitors":2},{"hook":"benefit_led","names":["Class Clinic คลาสคลินิก"],"total":3,"competitors":1},{"hook":"offer_free","names":["Gangnam Clinic"],"total":2.6,"competitors":1},{"hook":"before_after","names":["LBC Clinic เลอบิวทิส"],"total":1.8,"competitors":1},{"hook":"celebrity_review","names":["LBC Clinic เลอบิวทิส"],"total":1.8,"competitors":1},{"hook":"problem_solution","names":["Class Clinic คลาสคลินิก"],"total":1,"competitors":1},{"hook":"emotional","names":["Class Clinic คลาสคลินิก"],"total":1,"competitors":1}],"service_landscape":[{"names":["LBC Clinic เลอบิวทิส"],"service":"filler (multi brand: juvederm, restylane, e.p.t.q., neuramis, lorient)","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler 6cc package at 11,990 thb","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"botox (size m at 5,900 thb)","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"harmonyca + vitaran combination","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"hifu lifting: ultragio 14,990 thb, ultraformer iii, oligio","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"collaju filler 1cc at 11,000 thb","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"lip filler 1cc at 5,900 thb","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler bundle: buy 3 get 1 free (all brands)","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler bundle","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"harmonyca vitaran filler","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler 6cc","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"hifu lifting","mentions":1,"competitors":1},{"names":["LBC Clinic เลอบิวทิส"],"service":"filler 6cc botox","mentions":1,"competitors":1},{"names":["Gangnam Clinic"],"service":"laser hair removal","mentions":1,"competitors":1}],"format_distribution":[{"format":"Video","percentage":30,"competitors":10},{"format":"Image","percentage":19,"competitors":10},{"format":"Carousel","percentage":2,"competitors":10}],"intent_distribution":[{"names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","Emma Clinic Intl.","V Square Clinic"],"total":28.9,"intent":"conversion","competitors":5},{"names":["LBC Clinic เลอบิวทิส"],"total":14.3,"intent":"consideration","competitors":1},{"names":["LBC Clinic เลอบิวทิส","Class Clinic คลาสคลินิก","Emma Clinic Intl."],"total":3.8,"intent":"awareness","competitors":3}],"formats_per_competitor":[{"ads":25,"car":16,"img":12,"vid":72,"name":"LBC Clinic เลอบิวทิส"},{"ads":13,"car":0,"img":77,"vid":23,"name":"Gangnam Clinic"},{"ads":5,"car":0,"img":0,"vid":100,"name":"Class Clinic คลาสคลินิก"},{"ads":2,"car":0,"img":0,"vid":100,"name":"Emma Clinic Intl."},{"ads":2,"car":0,"img":100,"vid":0,"name":"V Square Clinic"},{"ads":0,"car":0,"img":0,"vid":0,"name":"Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า"},{"ads":0,"car":0,"img":0,"vid":0,"name":"SLC Clinic"},{"ads":0,"car":0,"img":0,"vid":0,"name":"THE KLINIQUE"},{"ads":0,"car":0,"img":0,"vid":0,"name":"Aura Bangkok Clinic"},{"ads":0,"car":0,"img":0,"vid":0,"name":"Meko Hospital โรงพยาบาล เมโกะ"}],"posts_hook_distribution":[{"name":"Other","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก","V Square Clinic"],"competitors":9,"weighted_total":10.2},{"name":"Benefit","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","Aura Bangkok Clinic"],"competitors":4,"weighted_total":0.8},{"name":"Emotional","names":["SLC Clinic"],"competitors":1,"weighted_total":0.6},{"name":"Urgency","names":["Gangnam Clinic"],"competitors":1,"weighted_total":0.2}],"posts_intent_distribution":[{"name":"Promotion","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ"],"competitors":7,"weighted_total":3.4},{"name":"Awareness","names":["SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Meko Hospital โรงพยาบาล เมโกะ","Class Clinic คลาสคลินิก"],"competitors":7,"weighted_total":3},{"name":"Engagement","names":["SLC Clinic","Gangnam Clinic","Aura Bangkok Clinic"],"competitors":3,"weighted_total":1.6}],"ads_hook_distribution":[{"hook":"social_proof","names":["LBC Clinic เลอบิวทิส","Emma Clinic Intl."],"total":10.9,"competitors":2},{"hook":"price_anchor","names":["Gangnam Clinic"],"total":10.4,"competitors":1},{"hook":"education","names":["LBC Clinic เลอบิวทิส"],"total":7.1,"competitors":1},{"hook":"promotion","names":["LBC Clinic เลอบิวทิส","V Square Clinic"],"total":5.6,"competitors":2},{"hook":"benefit_led","names":["Class Clinic คลาสคลินิก"],"total":3,"competitors":1},{"hook":"offer_free","names":["Gangnam Clinic"],"total":2.6,"competitors":1},{"hook":"before_after","names":["LBC Clinic เลอบิวทิส"],"total":1.8,"competitors":1},{"hook":"celebrity_review","names":["LBC Clinic เลอบิวทิส"],"total":1.8,"competitors":1},{"hook":"problem_solution","names":["Class Clinic คลาสคลินิก"],"total":1,"competitors":1},{"hook":"emotional","names":["Class Clinic คลาสคลินิก"],"total":1,"competitors":1}],"ads_intent_distribution":[{"names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","Emma Clinic Intl.","V Square Clinic"],"total":28.9,"intent":"conversion","competitors":5},{"names":["LBC Clinic เลอบิวทิส"],"total":14.3,"intent":"consideration","competitors":1},{"names":["LBC Clinic เลอบิวทิส","Class Clinic คลาสคลินิก","Emma Clinic Intl."],"total":3.8,"intent":"awareness","competitors":3}],"strategy_chart":[{"name":"Social proof","count":10.9},{"name":"Price anchor","count":10.4},{"name":"Other","count":10.2},{"name":"Education","count":7.1},{"name":"Promotion","count":5.6},{"name":"Benefit led","count":3},{"name":"Offer free","count":2.6},{"name":"Before after","count":1.8},{"name":"Celebrity review","count":1.8},{"name":"Emotional","count":1.6},{"name":"Problem solution","count":1},{"name":"Benefit","count":0.8},{"name":"Urgency","count":0.2}]},"deep_dives":[{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1609607769254641","usp":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","name":"LBC Clinic เลอบิวทิส","target":"Beauty-conscious women seeking affordable injectable treatments in Bangkok","page_id":"1609607769254641","momentum":"accelerating","cta_types":[],"platforms":["Instagram"],"total_ads":25,"strategy_en":"Problem-led hooks drive emotional engagement, then conversion via combo packages and direct CTA channels.","total_posts":3,"paid_snapshot":{"total_ads":25,"key_tactic":"Social proof hooks paired with bundled volume pricing (buy-3-get-1-free fillers, 6.6 deal) drive conversion at scale across 72% video format."},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/LBC_Clinic____________2026-04-28.png","data_confidence":"HIGH","key_observation":"Top post (engagement 23) used customer review format with 3-procedure recommendation, suggesting social proof outperforms promotional content.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":35},{"color":"#0891b2","label":"Laser and Skin Devices","score":5},{"color":"#059669","label":"Qualified Doctors and Certifications","score":2},{"color":"#7c3aed","label":"Deals and Special Pricing","score":32},{"color":"#dc2626","label":"Customer Reviews and Results","score":5}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/lebeautis/","median_engagement":11,"format_distribution":{"image":12,"video":72,"carousel":16},"business_positioning":{"usp":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","tier":"Mid-market","target":"Beauty-conscious women seeking affordable injectable treatments in Bangkok","services":["filler (multi brand: juvederm, restylane, e.p.t.q., neuramis, lorient)","filler 6cc package at 11,990 thb","botox (size m at 5,900 thb)","harmonyca + vitaran combination","hifu lifting: ultragio 14,990 thb, ultraformer iii, oligio","collaju filler 1cc at 11,000 thb","lip filler 1cc at 5,900 thb","filler bundle: buy 3 get 1 free (all brands)","filler","filler bundle","harmonyca vitaran filler","filler 6cc","hifu lifting","filler 6cc botox"],"usp_pillars":["Value pricing — 'ราคาไม่แรงแต่แพงที่ความสวย' appears in 9+ clusters","Doctor consultation before treatment — signaled across 5+ clusters","FDA-verified products — stated in 9+ clusters as trust signal","Post-treatment follow-up — repeated across 9+ clusters"],"main_promotions":["Filler 6CC at 11,990 THB (core hero package)","Filler buy 3 get 1 free + free Botox 50U","6.6 seasonal deal: filler + lip filler bundle","UltraGio HIFU at 14,990 THB"],"promotion_philosophy":"Bundled volume pricing with free add-ons; seasonal campaign alignment (6.6 deal)"},"_precomputed_promo_mix":[{"color":"#2563eb","count":3,"label":"Buy More Save More Bundles"},{"color":"#059669","count":1,"label":"Low Starting Price for New Customers"}],"master_strategy_bullets":["Dominates paid spend with 25 ads — 53% of all market advertising volume.","Deploys social proof + education combo hooks unavailable to any other active advertiser.","Bundles multi-brand fillers with free add-ons to convert volume-seeking customers.","Organic customer review reels outperform promotional posts 2x on engagement."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1609607769254641","threat":0,"threatLevel":"minimal","usp_en":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","target_en":"Beauty-conscious women seeking affordable injectable treatments in Bangkok","ads":25,"posts":3,"engagement":"11 median","discounts":"N/A","price":"ราคาไม่แรงแต่แพงที่ความสวย | 11,990 THB / 6CC | 14,990 THB UltraGio","positioning":"N/A","what_en":"Top post (engagement 23) used customer review format with 3-procedure recommendation, suggesting social proof outperforms promotional content.","car":16,"img":12,"vid":72,"bundle_score":0,"cta_path":"no-ads","platform_maturity":2.5,"platform_label":"Instagram","has_line":false,"format_alignment":7,"format_alignment_label":"Strong alignment"},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1528330850713953","usp":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","name":"Gangnam Clinic","target":"Price-sensitive new customers seeking entry-level aesthetic treatments","page_id":"1528330850713953","momentum":"stable","cta_types":["Direct Message"],"platforms":["Facebook","Messenger"],"total_ads":13,"strategy_en":"Burst-publishing mixed content on a single day targeting new customer acquisition via free trials, UGC contests, and trend-driven reels.","total_posts":6,"paid_snapshot":{"total_ads":13,"key_tactic":"Price-anchor hooks (99 THB / FREE trial) with Messenger CTA funnel new customers into multi-session upsell programs."},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/Gangnam_Clinic_2026-04-28.png","data_confidence":"HIGH","key_observation":"The trend-comparison REEL drove 23 engagements (68% of total), far outperforming all 5 IMAGE/CAROUSEL posts combined (11 total).","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":5},{"color":"#0891b2","label":"Laser and Skin Devices","score":7},{"color":"#059669","label":"Qualified Doctors and Certifications","score":5},{"color":"#7c3aed","label":"Deals and Special Pricing","score":21},{"color":"#dc2626","label":"Customer Reviews and Results","score":1},{"color":"#6366f1","label":"Many Clinic Locations Easy to Reach","score":3}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/gangnamclinic/","median_engagement":3,"format_distribution":{"image":77,"video":23,"carousel":0},"business_positioning":{"usp":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","tier":"Mass-market","target":"Price-sensitive new customers seeking entry-level aesthetic treatments","services":["laser hair removal","iv vitamin drip","dermal filler (neura)","laser hair removal (long pulse nd yag)","iv vitamin drip (vital glow)","korean filler (neura)"],"usp_pillars":["Aggressive intro pricing across all 3 services (Free, 99 THB, 1,999 THB)","New customer targeting explicit in 2/5 clusters","Doctor-performed procedures highlighted in 2/5 filler clusters"],"main_promotions":["Free underarm laser trial (Long Pulse Nd Yag)","Vital Glow IV drip at 99 THB first session","Korean filler Neura at 1,999 THB buy-1-get-2"],"promotion_philosophy":"trial-conversion"},"_precomputed_promo_mix":[{"color":"#059669","count":3,"label":"Low Starting Price for New Customers"}],"master_strategy_bullets":["Uses free-trial and 99 THB entry prices to convert price-sensitive new customers fast.","43-branch scale claim deployed as trust anchor in both paid and organic content.","Trend-hijacking reels (ปรุงจืด comparison) drive 68% of total organic engagement.","UGC contest mechanic (TikTok review requirement) generates earned content at low cost."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1528330850713953","threat":0,"threatLevel":"minimal","usp_en":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","target_en":"Price-sensitive new customers seeking entry-level aesthetic treatments","ads":13,"posts":6,"engagement":"3 median","discounts":"N/A","price":"FREE trial + 49 THB mask upsell | 99 THB first session | 1,999 THB buy-1-get-2 filler | 1,999 THB new customer price","positioning":"N/A","what_en":"The trend-comparison REEL drove 23 engagements (68% of total), far outperforming all 5 IMAGE/CAROUSEL posts combined (11 total).","car":0,"img":77,"vid":23,"bundle_score":0,"cta_path":"messenger","platform_maturity":5,"platform_label":"Facebook + Messenger","has_line":false,"format_alignment":5,"format_alignment_label":"Developing"},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=110907437158352","usp":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","name":"Class Clinic คลาสคลินิก","target":"Primarily female beauty seekers; 1/5 clusters targets male grooming segment","page_id":"110907437158352","momentum":"stable","cta_types":["LINE"],"platforms":["LINE"],"total_ads":5,"strategy_en":"Class Clinic uses benefit-led and result-showcase hooks across IMAGE and REEL equally, driving Line consultations via 7 of 8 posts. Social proof through named customer reviews (คุณโอ๊ต, คุณแนน) supports service promotion content.","total_posts":8,"paid_snapshot":{"total_ads":5,"key_tactic":"Benefit-led video ads with free consultation + installment options lower entry barrier without discounting."},"screenshot_url":null,"data_confidence":"MEDIUM","key_observation":"Top-performing post (engagement 36) was an IMAGE on hair removal with a specific technology claim (Diode X 4 energy), outperforming all other formats and topics by a wide margin.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":4},{"color":"#0891b2","label":"Laser and Skin Devices","score":2},{"color":"#059669","label":"Qualified Doctors and Certifications","score":7},{"color":"#7c3aed","label":"Deals and Special Pricing","score":12},{"color":"#dc2626","label":"Customer Reviews and Results","score":3},{"color":"#6366f1","label":"Many Clinic Locations Easy to Reach","score":2}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/Classclinicall/","median_engagement":7.5,"format_distribution":{"image":0,"video":100,"carousel":0},"business_positioning":{"usp":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","tier":"Mid-market","target":"Primarily female beauty seekers; 1/5 clusters targets male grooming segment","services":["re:gene skin brightening","lip filler (cat lip)","real cheek fat dissolving","oligio x skin lifting","re:gene skin brightening program","lip filler (cat lip shape)","real cheek fat dissolving 10cc","oligio x skin lifting (male segment)"],"usp_pillars":["Free doctor consultation offered in 4/5 clusters as zero-barrier entry","Installment payment 0% up to 3–15 months featured in 4/5 clusters","Daily doctor availability (no days off) stated in 4/5 clusters"],"main_promotions":["Free doctor skin/face assessment (4/5 clusters)","0% installment up to 15 months (4/5 clusters)","REAL cheek dissolving 10cc at 790 THB (1 cluster)","RE:GENE skin program at 5,990 THB (1 cluster)"],"promotion_philosophy":"low-barrier entry via free consultation + installment options, not heavy discounting"},"_precomputed_promo_mix":[{"color":"#2563eb","count":3,"label":"Buy More Save More Bundles"},{"color":"#7c3aed","count":1,"label":"Pay in Monthly Installments"}],"master_strategy_bullets":["Runs 100% video paid ads using benefit-led hooks; no price-war positioning.","Organic top post (engagement 36) driven by Diode X technology claim, not discount.","Targets male grooming segment — underserved niche absent from all other competitors.","Soft-sell LINE CTA present in 7 of 8 organic posts, prioritizing consultation over hard conversion."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=110907437158352","threat":0,"threatLevel":"minimal","usp_en":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","target_en":"Primarily female beauty seekers; 1/5 clusters targets male grooming segment","ads":5,"posts":8,"engagement":"7.5 median","discounts":"N/A","price":"5,990 THB stated | 790 THB stated","positioning":"N/A","what_en":"Top-performing post (engagement 36) was an IMAGE on hair removal with a specific technology claim (Diode X 4 energy), outperforming all other formats and topics by a wide margin.","car":0,"img":0,"vid":100,"bundle_score":0,"cta_path":"line-messaging","platform_maturity":2.5,"platform_label":"LINE","has_line":true,"format_alignment":7,"format_alignment_label":"Strong alignment"},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=1974279509487615","usp":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","name":"Emma Clinic Intl.","target":"Thai women considering first-time rhinoplasty; reference-based decision makers","page_id":"1974279509487615","momentum":"stable","cta_types":["LINE","Messenger"],"platforms":["Facebook","Instagram","LINE","Messenger"],"total_ads":2,"strategy_en":"Burst-publishing patient testimonial videos paired with named-doctor branding and price-anchored CTAs to drive consultation conversions via LINE/phone.","total_posts":7,"paid_snapshot":{"total_ads":2,"key_tactic":"Social proof video ads showing patient outcomes with LINE/Messenger CTA for rhinoplasty consultation."},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/Emma_Clinic_Intl___2026-04-28.png","data_confidence":"LOW","key_observation":"Top post (engagement 15) had no CTA; conversion posts averaged engagement 2, suggesting storytelling outperforms hard-sell hooks.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#d97706","label":"Nose Job and Surgical Procedures","score":15},{"color":"#059669","label":"Qualified Doctors and Certifications","score":10},{"color":"#7c3aed","label":"Deals and Special Pricing","score":6},{"color":"#dc2626","label":"Customer Reviews and Results","score":2}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/Emmaclinicpage/","median_engagement":3,"format_distribution":{"image":0,"video":100,"carousel":0},"business_positioning":{"usp":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","tier":"Mid-range","target":"Thai women considering first-time rhinoplasty; reference-based decision makers","services":["rhinoplasty (closed technique, teardrop shape, fdls technique)","rhinoplasty"],"usp_pillars":[],"main_promotions":["rhinoplasty starting at 7,900 THB","case-by-case facial design","1-year post-op care warranty"],"promotion_philosophy":"trust-building"},"_precomputed_promo_mix":[{"color":"#2563eb","count":3,"label":"Buy More Save More Bundles"}],"master_strategy_bullets":["Named doctor hashtags on all surgical content build personal trust over clinic brand.","Patient personal-story videos outperform hard-sell conversion posts 7x on engagement.","Technique-specific naming (FDLS, Soft-V) differentiates procedures from generic competitors.","Price anchors rhinoplasty 7,900–50,000 THB with bundle discount CTAs on LINE/Phone."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=1974279509487615","threat":0,"threatLevel":"minimal","usp_en":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","target_en":"Thai women considering first-time rhinoplasty; reference-based decision makers","ads":2,"posts":7,"engagement":"3 median","discounts":"N/A","price":"7,900 - 50,000 บาท","positioning":"N/A","what_en":"Top post (engagement 15) had no CTA; conversion posts averaged engagement 2, suggesting storytelling outperforms hard-sell hooks.","car":0,"img":0,"vid":100,"bundle_score":0,"cta_path":"line-messaging","platform_maturity":10,"platform_label":"Facebook + Instagram + LINE + Messenger","has_line":true,"format_alignment":7,"format_alignment_label":"Strong alignment"},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1016370841709812","usp":"• Volume social proof anchor: 200,000+ real customer cases\n• Branded filler bundles: Juvederm Ultra Plus + Volnewmer 200/300 shot combo\n• Volume threshold gifting mechanic (2cc/3cc triggers free gift)","name":"V Square Clinic","target":"Filler-intending consumers seeking branded product deals and installment options","page_id":"1016370841709812","momentum":"insufficient_data","cta_types":[],"platforms":["Facebook","Instagram"],"total_ads":2,"strategy_en":"Trust-first positioning using volume-based social proof as primary hook.","total_posts":1,"paid_snapshot":{"total_ads":2,"key_tactic":"Volume-incentive bundling with explicit cc pricing (7,490 THB/cc) and free gift threshold to drive larger filler purchase decisions."},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/V_Square_Clinic_2026-04-28.png","data_confidence":"LOW","key_observation":"Only 1 post available; no engagement recorded, limiting strategic conclusions.","posting_pattern":"light","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":14},{"color":"#0891b2","label":"Laser and Skin Devices","score":5},{"color":"#7c3aed","label":"Deals and Special Pricing","score":12},{"color":"#dc2626","label":"Customer Reviews and Results","score":5}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/VsquareClinic/","median_engagement":0,"format_distribution":{"image":100,"video":0,"carousel":0},"business_positioning":{"usp":"• Volume social proof anchor: 200,000+ real customer cases\n• Branded filler bundles: Juvederm Ultra Plus + Volnewmer 200/300 shot combo\n• Volume threshold gifting mechanic (2cc/3cc triggers free gift)","tier":"Premium","target":"Filler-intending consumers seeking branded product deals and installment options","services":["juvederm ultra plus filler","volnewmer 200/300 shot (sculptra type)","filler fill & firm combo program","filler + volnewmer 200/300 shot bonus"],"usp_pillars":[],"main_promotions":["Juvederm Ultra Plus 7,490/CC until 30 June","Free Volnewmer 200/300 Shot with 2CC/3CC filler purchase"],"promotion_philosophy":"volume-incentive bundling with branded product price anchoring"},"_precomputed_promo_mix":[{"color":"#2563eb","count":2,"label":"Buy More Save More Bundles"}],"master_strategy_bullets":["Paid ads focus exclusively on branded filler bundles with installment payment options.","200,000+ customer case count deployed as primary trust signal in organic content.","Volume threshold mechanic (buy 2cc/3cc for free gift) incentivizes larger treatment purchases.","Organic presence is minimal — 1 post with zero engagement signals weak social execution."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1016370841709812","threat":0,"threatLevel":"minimal","usp_en":"• Volume social proof anchor: 200,000+ real customer cases\n• Branded filler bundles: Juvederm Ultra Plus + Volnewmer 200/300 shot combo\n• Volume threshold gifting mechanic (2cc/3cc triggers free gift)","target_en":"Filler-intending consumers seeking branded product deals and installment options","ads":2,"posts":1,"engagement":"0 median","discounts":"N/A","price":"7,490/CC explicit price | volume threshold (2CC/3CC) for free gift","positioning":"N/A","what_en":"Only 1 post available; no engagement recorded, limiting strategic conclusions.","car":0,"img":100,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":5,"platform_label":"Facebook + Instagram","has_line":false,"format_alignment":5,"format_alignment_label":"Developing"},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&start_date[min]=2026-04-01&start_date[max]&view_all_page_id=111879680355815","usp":"• Injectable and energy-device focus implied by page name (Botox, Filler, HIFU, thread lift)\n• No verified content positioning available","name":"Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","target":"Unknown — no paid ad data available","page_id":"111879680355815","momentum":"insufficient_data","cta_types":[],"platforms":["Facebook","Instagram"],"total_ads":0,"strategy_en":"No actionable content strategy detectable from available data.","total_posts":0,"paid_snapshot":{"total_ads":0,"key_tactic":null},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/Sowon_clinic_Botox_Filler_HIFU________________________________________2026-04-28.png","data_confidence":"LOW","key_observation":"Only 1 post with empty caption and zero engagement was captured during analysis period.","posting_pattern":"light","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":8},{"color":"#0891b2","label":"Laser and Skin Devices","score":4}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/sowonclinic.skin/","median_engagement":null,"format_distribution":{"image":0,"video":0,"carousel":0},"business_positioning":{"usp":"• Injectable and energy-device focus implied by page name (Botox, Filler, HIFU, thread lift)\n• No verified content positioning available","tier":"Unknown","target":"Unknown — no paid ad data available","services":[],"usp_pillars":[],"main_promotions":[],"promotion_philosophy":"unknown"},"_precomputed_promo_mix":[],"master_strategy_bullets":["Zero paid ads and effectively zero organic content — no active digital acquisition strategy detectable.","Service portfolio implied by page name only: Botox, Filler, HIFU, thread lifts."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&start_date[min]=2026-04-01&start_date[max]&view_all_page_id=111879680355815","threat":0,"threatLevel":"minimal","usp_en":"• Injectable and energy-device focus implied by page name (Botox, Filler, HIFU, thread lift)\n• No verified content positioning available","target_en":"Unknown — no paid ad data available","ads":0,"posts":0,"engagement":"N/A","discounts":"N/A","price":"No pricing data","positioning":"N/A","what_en":"Only 1 post with empty caption and zero engagement was captured during analysis period.","car":0,"img":0,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":5,"platform_label":"Facebook + Instagram","has_line":false,"format_alignment":0},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=90182296639","usp":"• Anti-scam laser positioning (#เลเซอร์ขนไม่ถูกหลอกมาSLC) as trust differentiator\n• Recurring doctor series EP.28 (หลังโต๊ะรับแขก) for serialized credibility\n• Venus SLC™ branded cellulite device with 1,900 THB trial price","name":"SLC Clinic","target":"Unknown — no paid ad data available","page_id":"90182296639","momentum":"stable","cta_types":[],"platforms":["Instagram"],"total_ads":0,"strategy_en":"Content mixes trend-hijacking REELs, recurring doctor branding series, and pain-point hooks to drive broad awareness with minimal direct conversion CTAs.","total_posts":10,"paid_snapshot":{"total_ads":0,"key_tactic":null},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/SLC_Clinic__2026-04-28.png","data_confidence":"LOW","key_observation":"Top post (engagement 55) used trend hook 'ปรุงจืด' with 2,671 views; trend-led REELs outperform promotional images by 5x engagement.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#0891b2","label":"Laser and Skin Devices","score":5},{"color":"#059669","label":"Qualified Doctors and Certifications","score":4},{"color":"#7c3aed","label":"Deals and Special Pricing","score":4}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/SLCclinic/","median_engagement":7.5,"format_distribution":{"image":0,"video":0,"carousel":0},"business_positioning":{"usp":"• Anti-scam laser positioning (#เลเซอร์ขนไม่ถูกหลอกมาSLC) as trust differentiator\n• Recurring doctor series EP.28 (หลังโต๊ะรับแขก) for serialized credibility\n• Venus SLC™ branded cellulite device with 1,900 THB trial price","tier":"Mid","target":"Unknown — no paid ad data available","services":[],"usp_pillars":[],"main_promotions":[],"promotion_philosophy":"unknown"},"_precomputed_promo_mix":[],"master_strategy_bullets":["Anti-scam laser hashtag positions SLC as the safe alternative to deceptive competitors.","Recurring doctor series builds parasocial trust through consistent named-host format.","Trend-hijacking REELs (ปรุงจืด, 55 engagement) outperform promotional images 5x.","No paid ads — relies entirely on organic content for market acquisition."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=90182296639","threat":0,"threatLevel":"minimal","usp_en":"• Anti-scam laser positioning (#เลเซอร์ขนไม่ถูกหลอกมาSLC) as trust differentiator\n• Recurring doctor series EP.28 (หลังโต๊ะรับแขก) for serialized credibility\n• Venus SLC™ branded cellulite device with 1,900 THB trial price","target_en":"Unknown — no paid ad data available","ads":0,"posts":10,"engagement":"7.5 median","discounts":"N/A","price":"No pricing data","positioning":"N/A","what_en":"Top post (engagement 55) used trend hook 'ปรุงจืด' with 2,671 views; trend-led REELs outperform promotional images by 5x engagement.","car":0,"img":0,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":2.5,"platform_label":"Instagram","has_line":false,"format_alignment":0},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=261510020586082","usp":"• Exclusive ENFACE Lift technology branding (4 posts)\n• ZeeNuNew celebrity IP activation (pool party event drives 197 + 158 engagement top posts)\n• IV drip 80% flash discounts with 50-slot urgency mechanic","name":"THE KLINIQUE","target":"Unknown — no paid ad data available","page_id":"261510020586082","momentum":"stable","cta_types":[],"platforms":["Instagram"],"total_ads":0,"strategy_en":"Celebrity-led influencer marketing dominates 6 of 9 posts anchored by ZeeNuNew event activations and technology exclusivity claims for ENFACE Lift.","total_posts":9,"paid_snapshot":{"total_ads":0,"key_tactic":null},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/THE_KLINIQUE_2026-04-28.png","data_confidence":"LOW","key_observation":"Top 2 posts 197 and 158 engagement were both ZeeNuNew pool party REELs indicating celebrity IP drives highest organic reach.","posting_pattern":"light","_precomputed_dna":[{"color":"#7c3aed","label":"Deals and Special Pricing","score":4},{"color":"#dc2626","label":"Customer Reviews and Results","score":8}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/TheKliniqueMedicalClinic/","median_engagement":19,"format_distribution":{"image":0,"video":0,"carousel":0},"business_positioning":{"usp":"• Exclusive ENFACE Lift technology branding (4 posts)\n• ZeeNuNew celebrity IP activation (pool party event drives 197 + 158 engagement top posts)\n• IV drip 80% flash discounts with 50-slot urgency mechanic","tier":"Mid-Premium","target":"Unknown — no paid ad data available","services":[],"usp_pillars":[],"main_promotions":[],"promotion_philosophy":"unknown"},"_precomputed_promo_mix":[],"master_strategy_bullets":["ZeeNuNew celebrity event REELs drive highest organic reach — 197 and 158 engagement respectively.","ENFACE Lift technology exclusivity claim used across 4 posts as differentiation anchor.","IV drip flash discounts (80% off, 999–1,999 THB) with hard 50-slot cap create urgency.","No paid ads — celebrity IP and influencer volume substitute for paid distribution."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=261510020586082","threat":0,"threatLevel":"minimal","usp_en":"• Exclusive ENFACE Lift technology branding (4 posts)\n• ZeeNuNew celebrity IP activation (pool party event drives 197 + 158 engagement top posts)\n• IV drip 80% flash discounts with 50-slot urgency mechanic","target_en":"Unknown — no paid ad data available","ads":0,"posts":9,"engagement":"19 median","discounts":"N/A","price":"No pricing data","positioning":"N/A","what_en":"Top 2 posts 197 and 158 engagement were both ZeeNuNew pool party REELs indicating celebrity IP drives highest organic reach.","car":0,"img":0,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":2.5,"platform_label":"Instagram","has_line":false,"format_alignment":0},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=474365849417232","usp":"• Dual presenter reveal campaign mechanic — curiosity-gap teaser posts for new presenter announcements\n• Aerobics event activation at Central Khon Kaen Campus for physical community engagement\n• Named doctor consultation (หมอฝาย) for personalized contouring recommendations","name":"Aura Bangkok Clinic","target":"Unknown — no paid ad data available","page_id":"474365849417232","momentum":"stable","cta_types":["Booking"],"platforms":["Facebook","Instagram"],"total_ads":0,"strategy_en":"Aura Bangkok Clinic uses burst-day posting combining curiosity-driven influencer teaser campaigns with aggressive discount conversion posts to capture engagement and bookings simultaneously.","total_posts":11,"paid_snapshot":{"total_ads":0,"key_tactic":null},"screenshot_url":"https://cpprtoywvlxoumtlrjax.supabase.co/storage/v1/object/public/competitor-screenshots/Aura_Bangkok_Clinic_2026-04-28.png","data_confidence":"LOW","key_observation":"Curiosity-gap posts about new presenters (3 posts, top engagement 5) outperformed direct promotion posts, suggesting influencer reveal content drives stronger organic interaction.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#0891b2","label":"Laser and Skin Devices","score":1},{"color":"#059669","label":"Qualified Doctors and Certifications","score":8},{"color":"#7c3aed","label":"Deals and Special Pricing","score":8},{"color":"#dc2626","label":"Customer Reviews and Results","score":3}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/aurabangkokclinic/","median_engagement":1,"format_distribution":{"image":0,"video":0,"carousel":0},"business_positioning":{"usp":"• Dual presenter reveal campaign mechanic — curiosity-gap teaser posts for new presenter announcements\n• Aerobics event activation at Central Khon Kaen Campus for physical community engagement\n• Named doctor consultation (หมอฝาย) for personalized contouring recommendations","tier":"Mid","target":"Unknown — no paid ad data available","services":[],"usp_pillars":[],"main_promotions":[],"promotion_philosophy":"unknown"},"_precomputed_promo_mix":[],"master_strategy_bullets":["Curiosity-gap presenter reveal posts (3 posts) outperform direct discount posts on organic engagement.","Aggressive discount stacking: Aura White 6-session 8,500 THB, Oligio 300 shots 12,990 THB, 100 THB booking voucher.","11 posts in a single day signals burst-content strategy over sustained cadence.","No paid ads — relies on influencer collaborations and discount promotions for conversion."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=474365849417232","threat":0,"threatLevel":"minimal","usp_en":"• Dual presenter reveal campaign mechanic — curiosity-gap teaser posts for new presenter announcements\n• Aerobics event activation at Central Khon Kaen Campus for physical community engagement\n• Named doctor consultation (หมอฝาย) for personalized contouring recommendations","target_en":"Unknown — no paid ad data available","ads":0,"posts":11,"engagement":"1 median","discounts":"N/A","price":"No pricing data","positioning":"N/A","what_en":"Curiosity-gap posts about new presenters (3 posts, top engagement 5) outperformed direct promotion posts, suggesting influencer reveal content drives stronger organic interaction.","car":0,"img":0,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":5,"platform_label":"Facebook + Instagram","has_line":false,"format_alignment":0},{"fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=297545737435","usp":"• Every post names licensed doctor with medical registration number\n• SCT rhinoplasty proprietary technique with 4-year documented result framing\n• Hospital-grade positioning (โรงพยาบาล) vs clinic-grade competitors","name":"Meko Hospital โรงพยาบาล เมโกะ","target":"Unknown — no paid ad data available","page_id":"297545737435","momentum":"stable","cta_types":["LINE","Phone"],"platforms":["Instagram","LINE"],"total_ads":0,"strategy_en":"Doctor-branded surgical content using result-reveal hooks to drive Line/phone consultation conversions.","total_posts":4,"paid_snapshot":{"total_ads":0,"key_tactic":null},"screenshot_url":null,"data_confidence":"LOW","key_observation":"Image format outperformed REELs (5 vs avg 2 engagement); rhinoplasty content dominates all 4 posts.","posting_pattern":"aggressive","_precomputed_dna":[{"color":"#2563eb","label":"Botox and Filler Treatments","score":1},{"color":"#d97706","label":"Nose Job and Surgical Procedures","score":5},{"color":"#059669","label":"Qualified Doctors and Certifications","score":13},{"color":"#dc2626","label":"Customer Reviews and Results","score":5}],"organic_snapshot":{},"facebook_page_url":"https://www.facebook.com/mekohospital","median_engagement":3,"format_distribution":{"image":0,"video":0,"carousel":0},"business_positioning":{"usp":"• Every post names licensed doctor with medical registration number\n• SCT rhinoplasty proprietary technique with 4-year documented result framing\n• Hospital-grade positioning (โรงพยาบาล) vs clinic-grade competitors","tier":"Premium","target":"Unknown — no paid ad data available","services":[],"usp_pillars":[],"main_promotions":[],"promotion_philosophy":"unknown"},"_precomputed_promo_mix":[],"master_strategy_bullets":["All 4 organic posts feature named licensed doctors with registration numbers — regulatory trust signal.","SCT rhinoplasty technique with 4-month and 4-year long-term result documentation differentiates from short-term filler claims.","Hospital branding (not clinic) signals higher medical authority tier in this market.","No paid ads — doctor-trust content and result-reveal hooks drive LINE/phone consultation conversions."],"ads_library_screenshot_url":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=297545737435","threat":0,"threatLevel":"minimal","usp_en":"• Every post names licensed doctor with medical registration number\n• SCT rhinoplasty proprietary technique with 4-year documented result framing\n• Hospital-grade positioning (โรงพยาบาล) vs clinic-grade competitors","target_en":"Unknown — no paid ad data available","ads":0,"posts":4,"engagement":"3 median","discounts":"N/A","price":"No pricing data","positioning":"N/A","what_en":"Image format outperformed REELs (5 vs avg 2 engagement); rhinoplasty content dominates all 4 posts.","car":0,"img":0,"vid":0,"bundle_score":0,"cta_path":"no-ads","platform_maturity":5,"platform_label":"Instagram + LINE","has_line":true,"format_alignment":0}],"challengers":[{"name":"Gangnam Clinic","key_usp":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","momentum":"stable","total_ads":13,"total_posts":6,"tier_evidence":"Mass-market — Pricing: FREE trial + 49 THB mask upsell, 99 THB first session; 3 USP pillars; trial-conversion","data_confidence":"HIGH","positioning_tier":"Mass-market","master_strategy_bullets":["Uses free-trial and 99 THB entry prices to convert price-sensitive new customers fast.","43-branch scale claim deployed as trust anchor in both paid and organic content.","Trend-hijacking reels (ปรุงจืด comparison) drive 68% of total organic engagement.","UGC contest mechanic (TikTok review requirement) generates earned content at low cost."],"usp_en":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","ads":13,"posts":6},{"name":"Class Clinic คลาสคลินิก","key_usp":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","momentum":"stable","total_ads":5,"total_posts":8,"tier_evidence":"Mid-market — Pricing: 5,990 THB stated, 790 THB stated; 3 USP pillars; low-barrier entry via free consultation + installment option…","data_confidence":"MEDIUM","positioning_tier":"Mid-market","master_strategy_bullets":["Runs 100% video paid ads using benefit-led hooks; no price-war positioning.","Organic top post (engagement 36) driven by Diode X technology claim, not discount.","Targets male grooming segment — underserved niche absent from all other competitors.","Soft-sell LINE CTA present in 7 of 8 organic posts, prioritizing consultation over hard conversion."],"usp_en":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","ads":5,"posts":8},{"name":"Emma Clinic Intl.","key_usp":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","momentum":"stable","total_ads":2,"total_posts":7,"tier_evidence":"Mid-range — Pricing: 7,900 - 50,000 บาท; trust-building","data_confidence":"LOW","positioning_tier":"Mid-range","master_strategy_bullets":["Named doctor hashtags on all surgical content build personal trust over clinic brand.","Patient personal-story videos outperform hard-sell conversion posts 7x on engagement.","Technique-specific naming (FDLS, Soft-V) differentiates procedures from generic competitors.","Price anchors rhinoplasty 7,900–50,000 THB with bundle discount CTAs on LINE/Phone."],"usp_en":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","ads":2,"posts":7}],"insight_cards":[{"icon":"platform","body_en":["Filler + Botox injectable promotions across 5+ active competitors","HIFU/Oligio skin lifting device promotions claimed by 4+ competitors","IV drip skin brightening packages with heavy discounting by 3+ competitors"],"title_en":"OVER SATURATED ZONES"},{"icon":"hook","body_en":["Problem-solution hooks used only by Class Clinic in paid ads — untapped by others","Male grooming-specific creative absent from all competitors except Class Clinic","Anti-aging narrative for 40+ segment missing from all paid ad hooks"],"title_en":"HOOK GAPS"},{"icon":"Format","body_en":["No competitor runs carousel ads — only LBC uses carousel organically","Long-form educational video series absent from paid advertising entirely","Before/after transformation content underused in paid ads — only LBC runs it"],"title_en":"FORMAT GAPS"}],"market_leader":{"name":"LBC Clinic เลอบิวทิส","key_usp":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","momentum":"accelerating","total_ads":25,"total_posts":3,"tier_evidence":"Mid-market — Pricing: ราคาไม่แรงแต่แพงที่ความสวย, 11,990 THB / 6CC; 4 USP pillars; Bundled volume pricing with free add-ons; seasonal campaign …","data_confidence":"HIGH","positioning_tier":"Mid-market","master_strategy_bullets":["Dominates paid spend with 25 ads — 53% of all market advertising volume.","Deploys social proof + education combo hooks unavailable to any other active advertiser.","Bundles multi-brand fillers with free add-ons to convert volume-seeking customers.","Organic customer review reels outperform promotional posts 2x on engagement."],"usp_en":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","target_en":"Beauty-conscious women seeking affordable injectable treatments in Bangkok","what_en":"Top post (engagement 23) used customer review format with 3-procedure recommendation, suggesting social proof outperforms promotional content.","strategy_en":"Dominates paid spend with 25 ads — 53% of all market advertising volume."},"competitors_ranked":[{"name":"LBC Clinic เลอบิวทิส","key_usp":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","momentum":"accelerating","total_ads":25,"total_posts":3,"tier_evidence":"Mid-market — Pricing: ราคาไม่แรงแต่แพงที่ความสวย, 11,990 THB / 6CC; 4 USP pillars; Bundled volume pricing with free add-ons; seasonal campaign …","data_confidence":"HIGH","positioning_tier":"Mid-market","master_strategy_bullets":["Dominates paid spend with 25 ads — 53% of all market advertising volume.","Deploys social proof + education combo hooks unavailable to any other active advertiser.","Bundles multi-brand fillers with free add-ons to convert volume-seeking customers.","Organic customer review reels outperform promotional posts 2x on engagement."]},{"name":"Gangnam Clinic","key_usp":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","momentum":"stable","total_ads":13,"total_posts":6,"tier_evidence":"Mass-market — Pricing: FREE trial + 49 THB mask upsell, 99 THB first session; 3 USP pillars; trial-conversion","data_confidence":"HIGH","positioning_tier":"Mass-market","master_strategy_bullets":["Uses free-trial and 99 THB entry prices to convert price-sensitive new customers fast.","43-branch scale claim deployed as trust anchor in both paid and organic content.","Trend-hijacking reels (ปรุงจืด comparison) drive 68% of total organic engagement.","UGC contest mechanic (TikTok review requirement) generates earned content at low cost."]},{"name":"Class Clinic คลาสคลินิก","key_usp":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","momentum":"stable","total_ads":5,"total_posts":8,"tier_evidence":"Mid-market — Pricing: 5,990 THB stated, 790 THB stated; 3 USP pillars; low-barrier entry via free consultation + installment option…","data_confidence":"MEDIUM","positioning_tier":"Mid-market","master_strategy_bullets":["Runs 100% video paid ads using benefit-led hooks; no price-war positioning.","Organic top post (engagement 36) driven by Diode X technology claim, not discount.","Targets male grooming segment — underserved niche absent from all other competitors.","Soft-sell LINE CTA present in 7 of 8 organic posts, prioritizing consultation over hard conversion."]},{"name":"Emma Clinic Intl.","key_usp":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","momentum":"stable","total_ads":2,"total_posts":7,"tier_evidence":"Mid-range — Pricing: 7,900 - 50,000 บาท; trust-building","data_confidence":"LOW","positioning_tier":"Mid-range","master_strategy_bullets":["Named doctor hashtags on all surgical content build personal trust over clinic brand.","Patient personal-story videos outperform hard-sell conversion posts 7x on engagement.","Technique-specific naming (FDLS, Soft-V) differentiates procedures from generic competitors.","Price anchors rhinoplasty 7,900–50,000 THB with bundle discount CTAs on LINE/Phone."]},{"name":"V Square Clinic","key_usp":"• Volume social proof anchor: 200,000+ real customer cases\n• Branded filler bundles: Juvederm Ultra Plus + Volnewmer 200/300 shot combo\n• Volume threshold gifting mechanic (2cc/3cc triggers free gift)","momentum":"insufficient_data","total_ads":2,"total_posts":1,"tier_evidence":"Premium — Pricing: 7,490/CC explicit price, volume threshold (2CC/3CC) for free gift; volume-incentive bundling with branded product price anchori…","data_confidence":"LOW","positioning_tier":"Premium","master_strategy_bullets":["Paid ads focus exclusively on branded filler bundles with installment payment options.","200,000+ customer case count deployed as primary trust signal in organic content.","Volume threshold mechanic (buy 2cc/3cc for free gift) incentivizes larger treatment purchases.","Organic presence is minimal — 1 post with zero engagement signals weak social execution."]},{"name":"Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","key_usp":"• Injectable and energy-device focus implied by page name (Botox, Filler, HIFU, thread lift)\n• No verified content positioning available","momentum":"insufficient_data","total_ads":0,"total_posts":0,"tier_evidence":"Unknown — unknown","data_confidence":"LOW","positioning_tier":"Unknown","master_strategy_bullets":["Zero paid ads and effectively zero organic content — no active digital acquisition strategy detectable.","Service portfolio implied by page name only: Botox, Filler, HIFU, thread lifts."]},{"name":"SLC Clinic","key_usp":"• Anti-scam laser positioning (#เลเซอร์ขนไม่ถูกหลอกมาSLC) as trust differentiator\n• Recurring doctor series EP.28 (หลังโต๊ะรับแขก) for serialized credibility\n• Venus SLC™ branded cellulite device with 1,900 THB trial price","momentum":"stable","total_ads":0,"total_posts":10,"tier_evidence":"Mid — unknown","data_confidence":"LOW","positioning_tier":"Mid","master_strategy_bullets":["Anti-scam laser hashtag positions SLC as the safe alternative to deceptive competitors.","Recurring doctor series builds parasocial trust through consistent named-host format.","Trend-hijacking REELs (ปรุงจืด, 55 engagement) outperform promotional images 5x.","No paid ads — relies entirely on organic content for market acquisition."]},{"name":"THE KLINIQUE","key_usp":"• Exclusive ENFACE Lift technology branding (4 posts)\n• ZeeNuNew celebrity IP activation (pool party event drives 197 + 158 engagement top posts)\n• IV drip 80% flash discounts with 50-slot urgency mechanic","momentum":"stable","total_ads":0,"total_posts":9,"tier_evidence":"Mid-Premium — unknown","data_confidence":"LOW","positioning_tier":"Mid-Premium","master_strategy_bullets":["ZeeNuNew celebrity event REELs drive highest organic reach — 197 and 158 engagement respectively.","ENFACE Lift technology exclusivity claim used across 4 posts as differentiation anchor.","IV drip flash discounts (80% off, 999–1,999 THB) with hard 50-slot cap create urgency.","No paid ads — celebrity IP and influencer volume substitute for paid distribution."]},{"name":"Aura Bangkok Clinic","key_usp":"• Dual presenter reveal campaign mechanic — curiosity-gap teaser posts for new presenter announcements\n• Aerobics event activation at Central Khon Kaen Campus for physical community engagement\n• Named doctor consultation (หมอฝาย) for personalized contouring recommendations","momentum":"stable","total_ads":0,"total_posts":11,"tier_evidence":"Mid — unknown","data_confidence":"LOW","positioning_tier":"Mid","master_strategy_bullets":["Curiosity-gap presenter reveal posts (3 posts) outperform direct discount posts on organic engagement.","Aggressive discount stacking: Aura White 6-session 8,500 THB, Oligio 300 shots 12,990 THB, 100 THB booking voucher.","11 posts in a single day signals burst-content strategy over sustained cadence.","No paid ads — relies on influencer collaborations and discount promotions for conversion."]},{"name":"Meko Hospital โรงพยาบาล เมโกะ","key_usp":"• Every post names licensed doctor with medical registration number\n• SCT rhinoplasty proprietary technique with 4-year documented result framing\n• Hospital-grade positioning (โรงพยาบาล) vs clinic-grade competitors","momentum":"stable","total_ads":0,"total_posts":4,"tier_evidence":"Premium — unknown","data_confidence":"LOW","positioning_tier":"Premium","master_strategy_bullets":["All 4 organic posts feature named licensed doctors with registration numbers — regulatory trust signal.","SCT rhinoplasty technique with 4-month and 4-year long-term result documentation differentiates from short-term filler claims.","Hospital branding (not clinic) signals higher medical authority tier in this market.","No paid ads — doctor-trust content and result-reveal hooks drive LINE/phone consultation conversions."]}],"_precomputed_promos":[{"bg":"#e6f1fb","fill":"#185fa5","text":"#185fa5","count":14,"label":"Buy More Save More Bundles","names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","Emma Clinic Intl.","V Square Clinic"],"border":"#b5d4f4","examples":["Filler 6CC at 11,990 THB (core hero package)"],"compCount":5,"totalComps":10},{"bg":"#e6f1fb","fill":"#2980d9","text":"#185fa5","count":11,"label":"Low Starting Price for New Customers","names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","V Square Clinic"],"border":"#b5d4f4","examples":["Filler buy 3 get 1 free + free Botox 50U"],"compCount":4,"totalComps":10},{"bg":"#e6f1fb","fill":"#0a3d6b","text":"#0a3d6b","count":8,"label":"Price Cuts and Flash Sales","names":["Class Clinic คลาสคลินิก","Emma Clinic Intl.","THE KLINIQUE","Aura Bangkok Clinic"],"border":"#b5d4f4","examples":[],"compCount":4,"totalComps":10},{"bg":"#e6f1fb","fill":"#5ba3e6","text":"#185fa5","count":1,"label":"Pay in Monthly Installments","names":["Class Clinic คลาสคลินิก"],"border":"#b5d4f4","examples":["0% installment up to 15 months (4/5 clusters)"],"compCount":1,"totalComps":10}],"_precomputed_audience":[{"count":10,"label":"Men Seeking Beauty Treatments","names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","Emma Clinic Intl.","V Square Clinic","Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","SLC Clinic","THE KLINIQUE","Aura Bangkok Clinic","Meko Hospital โรงพยาบาล เมโกะ"],"score":100,"total":10},{"count":6,"label":"Price-Conscious Deal Hunters","names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","Emma Clinic Intl.","V Square Clinic","SLC Clinic"],"score":76,"total":10},{"count":6,"label":"Botox and Filler Treatments","names":["LBC Clinic เลอบิวทิส","Gangnam Clinic","Class Clinic คลาสคลินิก","V Square Clinic","Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","Meko Hospital โรงพยาบาล เมโกะ"],"score":74,"total":10},{"count":6,"label":"Look Younger and Tighter Skin","names":["LBC Clinic เลอบิวทิส","Class Clinic คลาสคลินิก","V Square Clinic","Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","THE KLINIQUE","Aura Bangkok Clinic"],"score":63,"total":10},{"count":3,"label":"Working Women in Their 20s to 40s","names":["LBC Clinic เลอบิวทิส","Class Clinic คลาสคลินิก","Emma Clinic Intl."],"score":45,"total":10},{"count":3,"label":"Laser and Skin Brightening","names":["Gangnam Clinic","Class Clinic คลาสคลินิก","SLC Clinic"],"score":33,"total":10},{"count":2,"label":"Vitamin Drips and Skin Glow Boosters","names":["Gangnam Clinic","THE KLINIQUE"],"score":23,"total":10},{"count":2,"label":"Nose Job and Surgical Procedures","names":["Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ"],"score":14,"total":10},{"count":2,"label":"High-End and Luxury Seekers","names":["V Square Clinic","THE KLINIQUE"],"score":14,"total":10},{"count":2,"label":"Body Slimming and Fat Removal","names":["SLC Clinic","Aura Bangkok Clinic"],"score":12,"total":10}],"threats":[],"opportunities":[],"layer2":{"service_bundling_en":"","seasonal_analysis_en":"","white_space_cards":[]},"competitors":[{"name":"LBC Clinic เลอบิวทิส","ads":25,"posts":3,"tier":"Mid-market","strategy_en":"Dominates paid spend with 25 ads — 53% of all market advertising volume.","usp_en":"• Multi-brand filler menu (Juvederm, Restylane, EPTQ, Neuramis, Lorient)\n• Buy-3-get-1-free bundle mechanic across all filler brands\n• 6.6 seasonal campaign alignment with volume price anchoring (11,990 THB/6cc)","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1609607769254641"},{"name":"Gangnam Clinic","ads":13,"posts":6,"tier":"Mass-market","strategy_en":"Uses free-trial and 99 THB entry prices to convert price-sensitive new customers fast.","usp_en":"• 43-branch national scale cited as trust signal\n• Ultra-low entry price conversion (99 THB first session, FREE trial laser)\n• GALDERMA clinical partnership co-branding for medical authority","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1528330850713953"},{"name":"Class Clinic คลาสคลินิก","ads":5,"posts":8,"tier":"Mid-market","strategy_en":"Runs 100% video paid ads using benefit-led hooks; no price-war positioning.","usp_en":"• 30-branch national network explicitly stated in paid ads\n• Diode X 4-energy hair removal technology (proprietary naming)\n• Male grooming segment targeted — 1 of 5 paid ad clusters dedicated to men","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=110907437158352"},{"name":"Emma Clinic Intl.","ads":2,"posts":7,"tier":"Mid-range","strategy_en":"Named doctor hashtags on all surgical content build personal trust over clinic brand.","usp_en":"• Named-doctor branding (#หมอกัมEmma / #หมอหนึ่งemma) across all surgical content\n• Technique-specific naming: Soft Open / Closed / Soft-V / FDLS for rhinoplasty\n• Same-day surgery with no recovery framing","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=1974279509487615"},{"name":"V Square Clinic","ads":2,"posts":1,"tier":"Premium","strategy_en":"Paid ads focus exclusively on branded filler bundles with installment payment options.","usp_en":"• Volume social proof anchor: 200,000+ real customer cases\n• Branded filler bundles: Juvederm Ultra Plus + Volnewmer 200/300 shot combo\n• Volume threshold gifting mechanic (2cc/3cc triggers free gift)","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=1016370841709812"},{"name":"Sowon clinic Botox Filler HIFU ร้อยไหม โบท็อกซ์ ฟิลเลอร์ ปรับรูปหน้า","ads":0,"posts":0,"tier":"Unknown","strategy_en":"Zero paid ads and effectively zero organic content — no active digital acquisition strategy detectable.","usp_en":"• Injectable and energy-device focus implied by page name (Botox, Filler, HIFU, thread lift)\n• No verified content positioning available","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&start_date[min]=2026-04-01&start_date[max]&view_all_page_id=111879680355815"},{"name":"SLC Clinic","ads":0,"posts":10,"tier":"Mid","strategy_en":"Anti-scam laser hashtag positions SLC as the safe alternative to deceptive competitors.","usp_en":"• Anti-scam laser positioning (#เลเซอร์ขนไม่ถูกหลอกมาSLC) as trust differentiator\n• Recurring doctor series EP.28 (หลังโต๊ะรับแขก) for serialized credibility\n• Venus SLC™ branded cellulite device with 1,900 THB trial price","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=90182296639"},{"name":"THE KLINIQUE","ads":0,"posts":9,"tier":"Mid-Premium","strategy_en":"ZeeNuNew celebrity event REELs drive highest organic reach — 197 and 158 engagement respectively.","usp_en":"• Exclusive ENFACE Lift technology branding (4 posts)\n• ZeeNuNew celebrity IP activation (pool party event drives 197 + 158 engagement top posts)\n• IV drip 80% flash discounts with 50-slot urgency mechanic","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=261510020586082"},{"name":"Aura Bangkok Clinic","ads":0,"posts":11,"tier":"Mid","strategy_en":"Curiosity-gap presenter reveal posts (3 posts) outperform direct discount posts on organic engagement.","usp_en":"• Dual presenter reveal campaign mechanic — curiosity-gap teaser posts for new presenter announcements\n• Aerobics event activation at Central Khon Kaen Campus for physical community engagement\n• Named doctor consultation (หมอฝาย) for personalized contouring recommendations","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[direction]=desc&sort_data[mode]=total_impressions&view_all_page_id=474365849417232"},{"name":"Meko Hospital โรงพยาบาล เมโกะ","ads":0,"posts":4,"tier":"Premium","strategy_en":"All 4 organic posts feature named licensed doctors with registration numbers — regulatory trust signal.","usp_en":"• Every post names licensed doctor with medical registration number\n• SCT rhinoplasty proprietary technique with 4-year documented result framing\n• Hospital-grade positioning (โรงพยาบาล) vs clinic-grade competitors","fb":"https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=TH&is_targeted_country=false&media_type=all&search_type=page&sort_data[mode]=relevancy_monthly_grouped&sort_data[direction]=desc&view_all_page_id=297545737435"}],"strategic_analysis":{"cta_distribution":{"direct-message":{"count":1,"competitors":["Gangnam Clinic"]},"line":{"count":7,"competitors":["Class Clinic คลาสคลินิก","Emma Clinic Intl.","Meko Hospital โรงพยาบาล เมโกะ","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic"]},"messenger":{"count":1,"competitors":["Emma Clinic Intl."]},"booking":{"count":1,"competitors":["Aura Bangkok Clinic"]},"phone":{"count":7,"competitors":["Meko Hospital โรงพยาบาล เมโกะ","SLC Clinic","Gangnam Clinic","LBC Clinic เลอบิวทิส","THE KLINIQUE","Aura Bangkok Clinic","Emma Clinic Intl."]},"dm":{"count":1,"competitors":["THE KLINIQUE"]}},"line_adopters_count":7,"seasonal_concentration":{"insight":"Seasonal analysis from market data.","untapped_triggers":["June","July","August","September","Rainy season","Workation","Solo travel"]},"unexploited_niches":[],"engagement_efficiency":[{"category":"influencer collaborations","posts":2.4,"pct_of_posts":4,"avg_engagement":null,"efficiency":0},{"category":"promotions & discounts","posts":2,"pct_of_posts":3,"avg_engagement":null,"efficiency":0},{"category":"procedure explanations (filler/botox/surgery)","posts":1.8,"pct_of_posts":3,"avg_engagement":null,"efficiency":0},{"category":"before/after transformations","posts":1.6,"pct_of_posts":3,"avg_engagement":null,"efficiency":0},{"category":"customer reviews","posts":1.2,"pct_of_posts":2,"avg_engagement":null,"efficiency":0},{"category":"facial treatments","posts":1,"pct_of_posts":2,"avg_engagement":null,"efficiency":0},{"category":"educational content (skin & beauty)","posts":0.6,"pct_of_posts":1,"avg_engagement":null,"efficiency":0},{"category":"clinic tour & branches","posts":0.6,"pct_of_posts":1,"avg_engagement":null,"efficiency":0},{"category":"korean beauty trends","posts":0.4,"pct_of_posts":1,"avg_engagement":null,"efficiency":0},{"category":"doctor branding","posts":0.2,"pct_of_posts":0,"avg_engagement":null,"efficiency":0}]}};
+</script>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-bg"></div><div class="cover-glow"></div>
+  <div class="cover-inner wrap">
+    <div class="cover-badge"><div class="cover-badge-line"></div><div class="cover-badge-text">Competitive Intelligence Report</div></div>
+    <h1 id="cover-title">Loading...<span id="cover-subtitle"></span></h1>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><span class="cover-meta-label">Industry</span><span class="cover-meta-value" id="meta-industry">—</span></div>
+      <div class="cover-meta-item"><span class="cover-meta-label">Region</span><span class="cover-meta-value" id="meta-region">—</span></div>
+      <div class="cover-meta-item"><span class="cover-meta-label">Period</span><span class="cover-meta-value" id="meta-date">—</span></div>
+      <div class="cover-meta-item"><span class="cover-meta-label">Analysts</span><span class="cover-meta-value" id="meta-analyst">—</span></div>
+      <div class="cover-meta-item"><span class="cover-meta-label">Data Source</span><span class="cover-meta-value" id="meta-source">—</span></div>
+    </div>
+  </div>
+  <div class="cover-strip" id="cover-strip"></div>
+</div>
+
+<div class="wrap" style="padding-top:20px">
+<div class="layer-hdr"><div class="layer-hdr-label">Section 1 · For Owners & Decision Makers</div><div class="layer-hdr-title">Executive Snapshot</div><div class="layer-hdr-sub">High-level market intelligence · 5-minute read</div></div>
+
+<!-- MARKET PULSE -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Market Pulse</div><div class="section-title-th">Key market numbers at a glance</div></div></div>
+<div class="section-body"><div class="kpi-row" id="kpi-row"></div>
+<div class="pulse-grid">
+<div class="chart-card"><div class="chart-card-title">Ad Volume by Competitor</div><div class="chart-card-sub">Sorted high to low</div><div id="adBars" style="margin-top:8px"></div></div>
+<div class="chart-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center"><div class="chart-card-title">Market Participation</div><div class="chart-card-sub">What % of the market is running ads</div><canvas id="ch_participation" height="140" style="max-height:140px;max-width:140px;width:100%;margin:8px auto 0"></canvas><div style="margin-top:8px;font-size:11px;color:var(--slate);text-align:center" id="participation-label"></div></div>
+</div></div></div>
+
+<!-- STRATEGIES & REACH -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Advertising Strategies & Reach</div><div class="section-title-th">Hook types used and organic post distribution</div></div></div>
+<div class="section-body"><div class="two-col">
+<div class="chart-card"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:var(--blue)">⚡</div><div><div class="chart-card-title">Ad Hook Strategies</div><div class="chart-card-sub">What messaging type competitors use most</div></div></div><canvas id="ch_strategies" height="180" style="max-height:min(220px,40vw);width:100%;margin-top:10px"></canvas></div>
+<div class="chart-card"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:var(--teal)">▦</div><div><div class="chart-card-title">Organic Post Volume</div><div class="chart-card-sub">Posts tracked in last 45 days</div></div></div><div id="postBars" style="margin-top:10px"></div></div>
+</div></div></div>
+
+<!-- CONTENT & AD ANALYTICS -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Content & Ad Analytics</div><div class="section-title-th">Post themes, ad formats, and content intent</div></div></div>
+<div class="section-body">
+<div class="chart-card" style="margin-bottom:12px"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:var(--blue)">📦</div><div><div class="chart-card-title">Post Categories</div><div class="chart-card-sub" id="postcats-sub">What they post about organically</div></div></div><div class="postcats-chart-wrap" style="margin-top:8px"><canvas id="ch_postcats"></canvas></div></div>
+<div class="two-col">
+<div class="chart-card"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:#2980d9">🖼</div><div><div class="chart-card-title">Ad Format Mix</div><div class="chart-card-sub" id="format-sub">Carousel vs Image vs Video</div></div></div><div id="hbar-format" style="margin-top:12px"></div></div>
+<div class="chart-card"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:#154d8a">🧠</div><div><div class="chart-card-title">Content Intent</div><div class="chart-card-sub">What ads are designed to achieve</div></div></div><div id="hbar-intent" style="margin-top:12px"></div></div>
+</div></div></div>
+<span id="strategy-count" style="display:none"></span>
+
+<!-- CTA STRATEGY -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">CTA Strategy</div><div class="section-title-th">How competitors route customer actions</div></div></div>
+<div class="section-body">
+<div class="chart-card"><div class="chart-card-icon-row"><div class="chart-card-icon-box" style="background:var(--gold)">📣</div><div><div class="chart-card-title">CTA Channel Routing</div><div class="chart-card-sub">How active advertisers route actions</div></div></div><canvas id="ch_cta" height="120" style="max-height:min(180px,30vw);width:100%;margin-top:8px"></canvas></div>
+</div></div>
+
+<!-- DAY-OVER-DAY CHANGES -->
+<div class="section" id="dod-section" style="display:none">
+  <div class="section-hdr">
+    <div class="section-hdr-txt">
+      <div class="section-title">📈 What Changed Since Yesterday</div>
+      <div class="section-title-th" id="dod-period-label"></div>
+    </div>
+  </div>
+  <div class="section-body">
+    <div id="dod-bullets" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<!-- KEY INSIGHTS -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">🔑 Key Strategic Insights</div><div class="section-title-th">Critical things business owners must know right now</div></div></div>
+<div class="section-body"><div class="insight-row-v2" id="insight-row"></div></div></div>
+
+<!-- MARKET LEADER -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">👑 Market Leader</div><div class="section-title-th">Who's strongest in the market right now, and why</div></div></div>
+<div class="section-body" style="padding:0"><div id="leader-grid"></div></div></div>
+
+<!-- COMPARATIVE TABLE -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Every Competitor Side by Side</div><div class="section-title-th">One glance to see every player</div></div></div>
+<div class="data-table-wrap"><table class="data-table"><thead><tr><th>#</th><th>Competitor</th><th>Ads</th><th>Posts</th><th>Main Strategy</th><th>USP</th></tr></thead><tbody id="comp-tbody"></tbody></table></div></div>
+
+<!-- AUDIENCE & PROMOTION INTELLIGENCE -->
+<div class="section" id="intel-dash-root" style="display:none">
+<div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Audience & Promotion Intelligence</div><div class="section-title-th">Target audience scoring · weighted by competitor count × ad volume</div></div></div>
+<div class="section-body"><div class="intel-two-col">
+<div class="aud-panel"><div class="aud-panel-title"><span class="aud-panel-dot" style="background:var(--gold)"></span>Audience Segments Targeted</div><div id="intel-audience-bars"></div></div>
+<div class="aud-panel"><div class="aud-panel-title"><span class="aud-panel-dot" style="background:var(--teal)"></span>Promotion Type Frequency</div><div id="intel-promo-bars"></div><div class="intel-tag-row" id="intel-promo-tags"></div></div>
+</div></div></div>
+<!-- CLIENT WEAKNESS ANALYSIS -->
+<div class="cwa-section" id="cwa-root" style="display:none">
+  <div class="cwa-header">
+    <div class="cwa-header-icon">🔍</div>
+    <div class="cwa-header-text">
+      <h3 id="cwa-title">Your Clinic vs Competitors</h3>
+      <p>Where you stand and what to improve — based on real market data</p>
+    </div>
+  </div>
+  <div class="cwa-overall" id="cwa-overall"></div>
+  <div class="cwa-grid" id="cwa-grid"></div>
+</div>
+<!-- DEEP PROFILES -->
+<div class="section"><div class="section-hdr"><div class="section-hdr-txt"><div class="section-title">Top Competitor Deep Profiles</div><div class="section-title-th">Real data from ads and posts — one card per competitor</div></div></div>
+<div class="section-body" id="dp-container"></div></div>
+
+</div>
+<div style="background:var(--ink);color:rgba(255,255,255,.3);text-align:center;padding:16px;font-size:10px;margin-top:20px;letter-spacing:.5px" id="footer-bar"></div>
+
+<script>
+// ===== SAFE HELPERS (client-side) =====
+function _safeArr(v){if(!v)return[];if(Array.isArray(v)){if(v.length&&Array.isArray(v[0]))return v.flat();return v;}return[v];}
+function _safeNum(v,fb){var n=Number(v);return isNaN(n)?(fb||0):n;}
+
+var RD=REPORT_DATA_PLACEHOLDER;
+var BLUE_7=["#0a3d6b","#154d8a","#185fa5","#2980d9","#5ba3e6","#89c0ed","#b5d8f5"];
+var DARK_BLUES=["#0a3d6b","#154d8a","#185fa5","#2980d9","#1a5276","#1f618d","#21618c"];
+var AUD_DARKS=["#0a3d6b","#154d8a","#185fa5","#2980d9"];
+var PROMO_DARKS=["#0a3d6b","#154d8a","#185fa5","#2980d9","#1a5276","#1f618d"];
+var PASTELS=["#fce4ec,#c62828","#e8eaf6,#283593","#e0f2f1,#00695c","#fff3e0,#e65100","#f3e5f5,#6a1b9a","#e1f5fe,#01579b","#fff8e1,#f57f17","#e8f5e9,#1b5e20","#fce4ec,#880e4f","#e0f7fa,#006064"].map(function(p){var s=p.split(",");return{bg:s[0],fg:s[1]};});
+
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function shortName(n){return String(n||"").replace(/ Hua Hin/i,"").replace(/ Resort/i,"").replace(/ Hotel/i,"").substring(0,22);}
+function arrToStr(v){if(Array.isArray(v))return v.join("\n");return String(v||"");}
+
+function buildHBar(label,pct,color,valText){
+  return '<div class="hbar-row"><div class="hbar-label" style="width:110px;min-width:90px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(label)+'</div><div class="hbar-track"><div class="hbar-fill" style="width:'+Math.max(4,pct)+'%;background:'+color+'">'+((pct>=15)?Math.round(pct)+'%':'')+'</div></div><div class="hbar-val" style="color:#0d1b2a">'+esc(valText)+'</div></div>';
+}
+
+function namesHtml(arr){
+  if(!arr||!arr.length)return "";
+  return '<div class="chart-names">'+arr.map(function(n,i){var p=PASTELS[i%PASTELS.length];return '<span class="chart-name-pill" style="background:'+p.bg+';color:'+p.fg+'">'+esc(shortName(n))+"</span>";}).join("")+"</div>";
+}
+
+var KPIS=RD.kpis||{};var META=RD.meta||{};var CH=RD.charts||{};
+
+// SAFE: market_leader is now guaranteed to be an object by server-side normalization
+var ML=RD.market_leader;
+if(!ML||typeof ML!=='object'||Array.isArray(ML)){ML=Array.isArray(ML)?(ML[0]||null):null;}
+if(ML&&!ML.name)ML=null;
+
+// SAFE: challengers — already flattened server-side, but double-check client-side
+var CHAL=_safeArr(RD.challengers);
+
+var COMP=_safeArr(RD.competitors);
+
+// SAFE: insight_cards — already flattened server-side, double-check client-side
+var CARDS=_safeArr(RD.insight_cards);
+
+var DD=_safeArr(RD.deep_dives);
+
+// ===== DAY-OVER-DAY CHANGES (gated render) =====
+(function(){
+  var hasPrev = RD.day_over_day_has_previous === true;
+  var changes = _safeArr(RD.day_over_day_changes_en);  // use _th in Thai inject node
+
+  // Hide if: no previous run at all, OR gap wasn't 1 day (both produce empty array from LLM)
+  if (!hasPrev || !changes.length) return;
+
+  var clean = changes.filter(function(c){ return c && String(c).trim().length > 0; });
+  if (!clean.length) return;
+
+  var section = document.getElementById("dod-section");
+  var bulletsEl = document.getElementById("dod-bullets");
+  var periodEl = document.getElementById("dod-period-label");
+
+  var period = RD.day_over_day_period || {};
+  if (period.previous_date && period.current_run) {
+    periodEl.textContent = period.previous_date + " → " + period.current_run;
+  } else if (period.previous_run) {
+    periodEl.textContent = "vs " + period.previous_run;
+  } else {
+    periodEl.textContent = "Day-over-day shifts";
+  }
+
+  // Detect "no movements" state — render with a calmer style
+  var isQuietDay = RD.day_over_day_has_change === false;
+
+  clean.forEach(function(c, i){
+    var d = document.createElement("div");
+    if (isQuietDay) {
+      // Calmer styling for "nothing changed" — no numbered prefix, muted color
+      d.style.cssText = "padding:12px 14px;background:var(--cloud);border-left:3px solid var(--mist);border-radius:6px;font-size:12px;line-height:1.5;color:var(--slate);font-style:italic";
+      d.textContent = c;
+    } else {
+      // Active changes — numbered, gold, bold
+      d.style.cssText = "display:flex;gap:10px;padding:10px 14px;background:var(--goldl);border-left:3px solid var(--gold);border-radius:6px;font-size:12px;line-height:1.5;color:var(--ink2)";
+      d.innerHTML = '<span style="color:var(--gold);font-weight:700;flex-shrink:0">'+(i+1)+'.</span><span>'+esc(c)+'</span>';
+    }
+    bulletsEl.appendChild(d);
+  });
+
+  section.style.display = "block";
+})();
+
+
+// COVER
+document.getElementById("cover-title").innerHTML=esc(META.title||"Competitor Analysis")+"<span>"+esc(META.subtitle||"")+"</span>";
+document.getElementById("meta-industry").textContent=META.industry||"—";
+document.getElementById("meta-region").textContent=META.region||"—";
+document.getElementById("meta-date").textContent=META.date||"—";
+document.getElementById("meta-analyst").textContent=META.analyst||"—";
+document.getElementById("meta-source").textContent=META.data_source||"—";
+document.getElementById("footer-bar").textContent=(META.analyst||"Pratap AI")+" · "+(META.title||"")+" · "+(META.date||"")+" · Data: "+(META.data_source||"Meta Ad Library + Facebook Pages");
+document.getElementById("strategy-count").textContent=META.competitors_count||KPIS.total_competitors||20;
+var stripTags=[(_safeNum(KPIS.total_competitors,0))+" Competitors Tracked",(_safeNum(KPIS.total_active_ads,0))+" Active Ads",(_safeNum(KPIS.total_posts,0))+" Organic Posts","Facebook + LINE + Instagram"];
+var stripEl=document.getElementById("cover-strip");stripTags.forEach(function(t){var s=document.createElement("span");s.className="cover-strip-tag";s.textContent=t;stripEl.appendChild(s);});
+
+// KPIs
+var kpiDefs=[{val:_safeNum(KPIS.total_competitors),label:"Competitors Tracked",sub:"Total competitors monitored",cls:""},{val:_safeNum(KPIS.total_active_ads),label:"Total Active Ads",sub:"Currently running ads",cls:"gold"},{val:_safeNum(KPIS.active_advertisers),label:"Active Advertisers",sub:_safeNum(KPIS.active_pct)+"% of market runs ads",cls:"teal"},{val:_safeNum(KPIS.total_posts),label:"Organic Posts",sub:"Organic posts tracked",cls:""}];
+var kpiRow=document.getElementById("kpi-row");kpiDefs.forEach(function(k){var d=document.createElement("div");d.className="kpi"+(k.cls?" "+k.cls:"");d.innerHTML='<div class="kpi-val">'+k.val+'</div><div class="kpi-label">'+esc(k.label)+'</div><div class="kpi-sub">'+esc(k.sub)+"</div>";kpiRow.appendChild(d);});
+document.getElementById("participation-label").innerHTML='<span style="font-weight:600;color:var(--gold)">'+_safeNum(KPIS.active_advertisers)+' competitors</span> running ads · <span style="font-weight:600;color:var(--mist)">'+_safeNum(KPIS.inactive_advertisers)+" competitors</span> no ads";
+
+// Ad volume bars
+(function(){var container=document.getElementById("adBars");var sorted=_safeArr(CH.ad_volume).filter(function(c){return _safeNum(c.ads)>0;}).sort(function(a,b){return _safeNum(b.ads)-_safeNum(a.ads);}).slice(0,10);if(!sorted.length){container.innerHTML='<div style="color:var(--mist);font-size:11px;padding:8px">No ad data</div>';return;}var max=_safeNum(sorted[0].ads,1);var colors=["gold","gold","gold","blue","blue","teal","teal","mist","mist","mist"];sorted.forEach(function(c,i){var ads=_safeNum(c.ads);var pct=Math.round((ads/max)*100);var row=document.createElement("div");row.className="ad-bar-row";row.innerHTML='<div class="ad-bar-name" title="'+esc(c.name)+'">'+esc(shortName(c.name))+'</div><div class="ad-bar-track"><div class="ad-bar-fill '+(colors[i]||"fog")+'" style="width:'+pct+'%">'+(ads>2?ads:"")+'</div></div><div class="ad-bar-count">'+ads+"</div>";container.appendChild(row);});})();
+
+// Post volume bars
+(function(){var container=document.getElementById("postBars");var sorted=_safeArr(CH.post_volume).filter(function(c){return _safeNum(c.posts)>0;}).sort(function(a,b){return _safeNum(b.posts)-_safeNum(a.posts);}).slice(0,14);if(!sorted.length){container.innerHTML='<div style="color:var(--mist);font-size:11px;padding:8px">No post data</div>';return;}var max=_safeNum(sorted[0].posts,1);sorted.forEach(function(c){var posts=_safeNum(c.posts);var pct=Math.round((posts/max)*100);var row=document.createElement("div");row.className="post-bar-row";row.innerHTML='<div class="post-bar-name" title="'+esc(c.name)+'">'+esc(shortName(c.name))+'</div><div class="post-bar-track"><div class="post-bar-fill" style="width:'+pct+'%">'+(posts>6?posts:"")+'</div></div><div class="post-bar-count">'+posts+"</div>";container.appendChild(row);});})();
+
+// Post categories sub-label
+var topCats=_safeArr(CH.post_categories).slice(0,2);if(topCats.length>=2){var totalCatWeight=_safeArr(CH.post_categories).reduce(function(s,c){return s+_safeNum(c.weighted_total||c.total);},0);document.getElementById("postcats-sub").textContent=(topCats[0].name||topCats[0].category)+" leads at "+Math.round((_safeNum(topCats[0].weighted_total||topCats[0].total)/Math.max(totalCatWeight,1))*100)+"% — "+(topCats[1].name||topCats[1].category)+" follows";}
+
+// Ad Format horizontal bars
+(function(){var container=document.getElementById("hbar-format");var fmtData=_safeArr(CH.format_distribution);if(!fmtData.length){container.innerHTML='<div style="color:var(--mist);font-size:11px;padding:8px">No format data</div>';return;}var fmtColors={Carousel:"#0a3d6b",Image:"#2980d9",Video:"#89c0ed"};var totalPct=fmtData.reduce(function(s,f){return s+_safeNum(f.pct!=null?f.pct:f.percentage);},0)||1;var html="";fmtData.forEach(function(f){var p=_safeNum(f.pct!=null?f.pct:f.percentage);var pct=Math.round((p/totalPct)*100);html+=buildHBar(f.format,pct,fmtColors[f.format]||"#5ba3e6","~"+p+"%");});container.innerHTML=html;})();
+
+// Content Intent horizontal bars — with names in background box
+(function(){
+  var container=document.getElementById("hbar-intent");
+  var intentSrc=_safeArr(CH.ads_intent_distribution);
+  var convEntry=intentSrc.find(function(i){return i.intent==="conversion";})||{};
+  var awrEntry=intentSrc.find(function(i){return i.intent==="awareness";})||{};
+  var consEntry=intentSrc.find(function(i){return i.intent==="consideration";})||{};
+  var convTotal=_safeNum(convEntry.total);var awrTotal=_safeNum(awrEntry.total);var consTotal=_safeNum(consEntry.total);
+  var allTotal=convTotal+awrTotal+consTotal;
+  if(!allTotal){allTotal=1;convTotal=0;awrTotal=0;consTotal=0;}
+  var items=[
+    {label:"Conversion",val:convTotal,color:"#0a3d6b",names:convEntry.names},
+    {label:"Awareness",val:awrTotal,color:"#2980d9",names:awrEntry.names},
+    {label:"Consideration",val:consTotal,color:"#5ba3e6",names:consEntry.names}
+  ];
+  var html="";
+  items.forEach(function(it){
+    if(it.val<=0)return;
+    var pct=Math.round((it.val/allTotal)*100);
+    html+=buildHBar(it.label,pct,it.color,pct+"%");
+    if(it.names&&it.names.length){
+      html+='<div style="background:#eef3fb;border:1px solid #d4e3f5;border-radius:6px;padding:5px 8px;margin-bottom:10px">'+namesHtml(it.names)+'</div>';
+    }
+  });
+  container.innerHTML=html||'<div style="color:var(--mist);font-size:11px;padding:8px">No intent data</div>';
+})();
+
+// Key Insights — FIXED: handles nested arrays and dynamic count
+var insightConfigs=[{cls:"c-blue",icon:"⚡",num:"INSIGHT 01"},{cls:"c-teal",icon:"🕐",num:"INSIGHT 02"},{cls:"c-purple",icon:"⭐",num:"INSIGHT 03"},{cls:"c-blue",icon:"🎯",num:"INSIGHT 04"},{cls:"c-teal",icon:"📊",num:"INSIGHT 05"}];
+var insightRow=document.getElementById("insight-row");
+CARDS.slice(0,5).forEach(function(card,i){
+  if(!card||typeof card!=='object')return;
+  var cfg=insightConfigs[i%insightConfigs.length];
+  cfg.num="INSIGHT "+(i<9?"0":"")+(i+1);
+  var rawLines=Array.isArray(card.body_en)?card.body_en:String(card.body_en||"").split("\n");
+  var bullets=rawLines.filter(function(x){return x&&x.trim().length>0;});
+  var bodyHtml=bullets.map(function(b){var text=String(b).trim();var fc=text.charAt(0);if(fc==="•"||fc==="·"||fc==="-"||fc==="*"){text=text.substring(1).trim();}return '<div class="insight-bullet-v2"><span class="insight-bullet-arrow">→</span><span>'+esc(text)+"</span></div>";}).join("");
+  var d=document.createElement("div");d.className="insight-card-v2 "+cfg.cls;
+  d.innerHTML='<div class="insight-card-v2-hdr"><div class="insight-card-v2-icon">'+cfg.icon+"</div><div>"+'<div class="insight-card-v2-label">'+cfg.num+"</div>"+'<div class="insight-card-v2-title">'+esc(card.title_en||"")+"</div></div></div>"+'<div class="insight-card-v2-body">'+bodyHtml+"</div>";
+  insightRow.appendChild(d);
+});
+
+// market narrative removed
+
+// Market Leader — FIXED: ML is now guaranteed object or null
+var lgEl=document.getElementById("leader-grid");
+if(ML&&ML.name){
+  var mlAds=_safeNum(ML.total_ads||ML.ads);var mlPosts=_safeNum(ML.total_posts||ML.posts);
+  var mlDD0=DD.find(function(d){return d.name===ML.name;});
+  var mlMedian=mlDD0&&mlDD0.median_engagement!=null?mlDD0.median_engagement:null;
+  var mlAvgEng=mlMedian!=null?(mlMedian+" median"):((ML.organic_snapshot&&ML.organic_snapshot.avg_engagement)?ML.organic_snapshot.avg_engagement:"—");
+  var mlTier=ML.positioning_tier||"Premium";var mlMomentum=ML.momentum||"";
+  var mlStandout=(ML.organic_snapshot&&ML.organic_snapshot.standout_post)?ML.organic_snapshot.standout_post:"";
+  var mlDD=DD.find(function(d){return d.name===ML.name;});
+  var mlPillars=(mlDD&&mlDD.business_positioning&&mlDD.business_positioning.usp_pillars)?_safeArr(mlDD.business_positioning.usp_pillars):[];
+  if(!mlPillars.length&&ML.key_usp){mlPillars=ML.key_usp.split(".").map(function(s){return s.trim();}).filter(function(s){return s.length>4;});}
+  var mlBullets=_safeArr(ML.master_strategy_bullets);
+  var statsHtml=[{val:mlAds,label:"ADS"},{val:mlPosts,label:"POSTS"}].map(function(s){return '<div class="leader-v2-stat"><div class="leader-v2-stat-val">'+s.val+'</div><div class="leader-v2-stat-label">'+s.label+"</div></div>";}).join("");
+  var pillsHtml=mlPillars.map(function(p){return '<span class="leader-v2-pill">'+esc(p)+"</span>";}).join("");
+  var bulletsHtml=mlBullets.map(function(b){return '<div class="leader-v2-bullet"><span class="leader-v2-bullet-arrow">→</span><span>'+esc(b)+"</span></div>";}).join("");
+  var chalPastels=[{bg:"var(--goldl)",border:"var(--goldm)",accent:"var(--gold)"},{bg:"var(--bluel)",border:"#b5d4f4",accent:"var(--blue)"},{bg:"var(--teall)",border:"var(--tealm)",accent:"var(--teal)"}];
+  var chalHtml='<div class="leader-v2-challengers"><div class="leader-v2-chal-hdr">Top Challengers</div><div class="leader-v2-chal-list">';
+  CHAL.slice(0,3).forEach(function(c,ci){
+    if(!c||!c.name)return;
+    var cAds=_safeNum(c.total_ads||c.ads);var p=chalPastels[ci%chalPastels.length];
+    chalHtml+='<div class="leader-v2-chal-item" style="background:'+p.bg+';border-left:3px solid '+p.accent+';margin:8px 12px;border-radius:var(--r);padding:12px 14px;">'+'<div class="leader-v2-chal-name-row"><div class="leader-v2-chal-name">'+esc(c.name)+'</div><span class="leader-v2-chal-ads" style="background:'+p.bg+';color:'+p.accent+';border-color:'+p.border+'">'+cAds+' ads</span></div><div class="leader-v2-chal-usp">'+esc(c.usp_en||c.key_usp||"—")+"</div></div>";
+  });
+  chalHtml+="</div></div>";
+  lgEl.innerHTML='<div class="leader-v2-wrap"><div class="leader-v2-main"><div class="leader-v2-header"><div class="leader-v2-badge">👑 Market Leader</div><div class="leader-v2-name">'+esc(ML.name)+'</div><div class="leader-v2-tier-row"><span class="leader-v2-tier-text">'+esc(mlTier)+' Tier</span>'+(mlMomentum?'<span class="leader-v2-accel">▲ '+esc(mlMomentum)+"</span>":"")+'</div><div class="leader-v2-stats">'+statsHtml+"</div></div>"+'<div class="leader-v2-body">'+(mlPillars.length?'<div><div class="leader-v2-section-label">• USP Pillars</div><div class="leader-v2-pills">'+pillsHtml+"</div></div>":"")+(mlBullets.length?'<div><div class="leader-v2-section-label">• Why They Lead</div><div class="leader-v2-bullets">'+bulletsHtml+"</div></div>":"")+"</div>"+(mlStandout?'<div class="leader-v2-standout">⭐ <span>'+esc(mlStandout)+"</span></div>":"")+"</div>"+chalHtml+"</div>";
+}else{
+  lgEl.innerHTML='<div style="color:var(--mist);padding:12px">No market leader data.</div>';
+}
+
+// Competitor Table
+var tbody=document.getElementById("comp-tbody");COMP.forEach(function(c,i){if(!c||!c.name)return;var ads=_safeNum(c.ads||c.total_ads);var posts=_safeNum(c.posts||c.total_posts);var tr=document.createElement("tr");tr.innerHTML='<td style="color:var(--mist);font-weight:600">'+(i+1)+"</td>"+'<td><span class="td-name">'+esc(c.name)+"</span></td>"+'<td style="font-weight:700;color:'+(ads>5?"var(--gold)":ads>0?"var(--slate)":"var(--mist)")+'">'+ads+"</td>"+'<td style="color:var(--teal);font-weight:600">'+posts+"</td><td>"+esc(c.strategy_en||"—")+"</td><td>"+esc(c.usp_en||c.key_usp||"—")+"</td>";tbody.appendChild(tr);});
+
+// ===== AUDIENCE & PROMOTION =====
+(function(){
+  var preAud=_safeArr(RD._precomputed_audience);
+  var prePromos=_safeArr(RD._precomputed_promos);
+  if(!preAud.length&&!prePromos.length) return;
+
+  var audBarsEl=document.getElementById("intel-audience-bars");
+  preAud.forEach(function(g,idx){
+    if(!g||!g.label)return;
+    var barColor=AUD_DARKS[idx%AUD_DARKS.length];
+    var row=document.createElement("div");
+    row.className="intel-aud-row";
+    row.style.flexWrap="wrap";
+    var nameBox="";
+    if(g.names&&g.names.length){
+      nameBox='<div style="width:100%;background:#eef3fb;border:1px solid #d4e3f5;border-radius:6px;padding:5px 8px;margin-top:5px">'+namesHtml(g.names)+'</div>';
+    }
+    row.innerHTML='<div class="intel-aud-label">'+esc(g.label)+'</div><div class="intel-aud-track"><div class="intel-aud-fill" style="width:'+_safeNum(g.score)+"%;background:"+barColor+'"></div></div><div class="intel-aud-val" style="color:#0d1b2a;font-weight:700">'+_safeNum(g.score)+'%</div><div class="intel-aud-count" style="color:#0d1b2a;font-weight:700">'+_safeNum(g.count)+"/"+_safeNum(g.total)+"</div>"+nameBox;
+    audBarsEl.appendChild(row);
+  });
+
+  var promoBarsEl=document.getElementById("intel-promo-bars");
+  var promoTagsEl=document.getElementById("intel-promo-tags");
+  var maxPromo=(prePromos[0]&&prePromos[0].count)?prePromos[0].count:1;
+  var promoIdx=0;
+  prePromos.forEach(function(g){
+    if(!g||!_safeNum(g.count)) return;
+    var darkFill=PROMO_DARKS[promoIdx%PROMO_DARKS.length];
+    promoIdx++;
+    var pct=Math.max(10,Math.round((_safeNum(g.count)/maxPromo)*100));
+    var totalComps=_safeNum(g.totalComps,5);
+    var compCount=_safeNum(g.compCount);
+    var label=compCount>=Math.ceil(totalComps*0.6)?"saturated":compCount>=Math.ceil(totalComps*0.3)?"common":"niche";
+    var labelColor=label==="saturated"?"#c0392b":label==="common"?"#9a7620":"#3d5470";
+    var nameBox="";
+    if(g.names&&g.names.length){
+      nameBox='<div style="background:#eef3fb;border:1px solid #d4e3f5;border-radius:6px;padding:5px 8px;margin-top:5px;margin-bottom:4px">'+namesHtml(g.names)+'</div>';
+    }
+    var rowEl=document.createElement("div");
+    rowEl.className="intel-promo-row";
+    rowEl.innerHTML='<div class="intel-promo-top"><div class="intel-promo-name" style="color:#0d1b2a;font-weight:700">'+esc(g.label)+'</div><div class="intel-promo-track"><div class="intel-promo-fill" style="width:'+pct+"%;background:"+darkFill+';color:#ffffff;font-weight:800">'+compCount+(compCount===1?" comp":" comps")+'</div></div><div class="intel-promo-ct" style="color:'+labelColor+';font-style:normal;font-weight:800">'+label+"</div></div>"+nameBox+(_safeArr(g.examples).length?'<div class="intel-promo-example">'+esc(g.examples[0])+"</div>":"");
+    promoBarsEl.appendChild(rowEl);
+    var tag=document.createElement("span");
+    tag.className="intel-tag";
+    tag.textContent=g.label+" ("+_safeNum(g.count)+")";
+    tag.style.background=g.bg||"#e6f1fb";
+    tag.style.borderColor=g.border||"#b5d4f4";
+    tag.style.color=g.text||"#185fa5";
+    promoTagsEl.appendChild(tag);
+  });
+  document.getElementById("intel-dash-root").style.display="block";
+})();
+
+// ===== CLIENT WEAKNESS ANALYSIS =====
+(function(){
+  var CWA = RD.client_weakness_analysis;
+  if (!CWA) return;
+  // Handle both direct object and nested wrapper
+  if (CWA.client_weakness_analysis) CWA = CWA.client_weakness_analysis;
+  if (!CWA || !CWA.client_name) return;
+
+  document.getElementById("cwa-root").style.display = "block";
+  document.getElementById("cwa-title").textContent = esc(CWA.client_name || "Your Clinic") + " vs Competitors";
+  document.getElementById("cwa-overall").textContent = CWA.overall_position || "";
+
+  var grid = document.getElementById("cwa-grid");
+
+  var sections = [
+    { data: CWA.ad_volume_gap,   icon: "📢", iconBg: "var(--gold)",  cls: "" },
+    { data: CWA.content_gap,     icon: "📄", iconBg: "var(--teal)",  cls: "" },
+    { data: CWA.hook_format_gap, icon: "⚡",       iconBg: "var(--blue)",  cls: "" },
+    { data: CWA.engagement_gap,  icon: "📊", iconBg: "#7c3aed",     cls: "" },
+    { data: CWA.cta_pricing_gap, icon: "📣", iconBg: "var(--gold)",  cls: "" },
+    { data: CWA.quick_wins,      icon: "✅",       iconBg: "var(--teal)",  cls: "quickwins full-width" }
+  ];
+
+  sections.forEach(function(sec) {
+    if (!sec.data || !sec.data.bullets || !sec.data.bullets.length) return;
+
+    var card = document.createElement("div");
+    card.className = "cwa-card " + sec.cls;
+
+    var titleHtml = '<div class="cwa-card-title"><div class="cwa-card-title-icon" style="background:' + sec.iconBg + '">' + sec.icon + '</div>' + esc(sec.data.title || "") + '</div>';
+
+    // Stats row for sections with numbers
+    var statsHtml = "";
+    if (sec.data.client_ads !== undefined && sec.data.client_ads !== null) {
+      statsHtml = '<div class="cwa-stat-row">' +
+        '<div class="cwa-stat"><div class="cwa-stat-val red">' + _safeNum(sec.data.client_ads) + '</div><div class="cwa-stat-label">Your Ads</div></div>' +
+        '<div class="cwa-stat"><div class="cwa-stat-val gold">' + _safeNum(sec.data.market_avg_ads) + '</div><div class="cwa-stat-label">Market Avg</div></div>' +
+        '<div class="cwa-stat"><div class="cwa-stat-val teal">' + _safeNum(sec.data.leader_ads) + '</div><div class="cwa-stat-label">' + esc(shortName(sec.data.leader_name || "Leader")) + '</div></div>' +
+        '</div>';
+    }
+    if (sec.data.client_posts !== undefined && sec.data.client_posts !== null) {
+      statsHtml = '<div class="cwa-stat-row">' +
+        '<div class="cwa-stat"><div class="cwa-stat-val red">' + _safeNum(sec.data.client_posts) + '</div><div class="cwa-stat-label">Your Posts</div></div>' +
+        '<div class="cwa-stat"><div class="cwa-stat-val gold">' + _safeNum(sec.data.market_avg_posts) + '</div><div class="cwa-stat-label">Market Avg</div></div>' +
+        '</div>';
+    }
+    if (sec.data.client_avg_engagement !== undefined && sec.data.client_avg_engagement !== null && sec.data.client_avg_engagement > 0) {
+      statsHtml = '<div class="cwa-stat-row">' +
+        '<div class="cwa-stat"><div class="cwa-stat-val red">' + _safeNum(sec.data.client_avg_engagement) + '</div><div class="cwa-stat-label">Your Eng.</div></div>' +
+        '<div class="cwa-stat"><div class="cwa-stat-val gold">' + _safeNum(sec.data.market_avg_engagement) + '</div><div class="cwa-stat-label">Market Avg</div></div>' +
+        '</div>';
+    }
+
+    var bulletsHtml = _safeArr(sec.data.bullets).map(function(b) {
+      return '<div class="cwa-bullet"><div class="cwa-bullet-dot"></div><span>' + esc(b) + '</span></div>';
+    }).join("");
+
+    card.innerHTML = titleHtml + statsHtml + bulletsHtml;
+    grid.appendChild(card);
+  });
+})();
+
+// ===== DEEP PROFILES =====
+var dpContainer=document.getElementById("dp-container");
+var _mktAvgAds=DD.length?Math.round(DD.reduce(function(s,d){return s+_safeNum(d.ads);},0)/DD.length*10)/10:0;
+var _mktAvgPosts=DD.length?Math.round(DD.reduce(function(s,d){return s+_safeNum(d.posts);},0)/DD.length*10)/10:0;
+var _engVals=DD.map(function(d){var e=parseFloat(String(d.engagement||"").replace(/[^0-9.]/g,""));return isNaN(e)?0:e;}).filter(function(v){return v>0;});
+var _mktAvgEng=_engVals.length?Math.round(_engVals.reduce(function(s,v){return s+v;},0)/_engVals.length*10)/10:0;
+var _maxAds=Math.max.apply(null,DD.map(function(d){return _safeNum(d.ads);}).concat([1]));
+var _maxPosts=Math.max.apply(null,DD.map(function(d){return _safeNum(d.posts);}).concat([1]));
+var _maxEng=Math.max.apply(null,_engVals.concat([1]));
+
+function buildVisualIntel(d){
+  var ads=_safeNum(d.ads);var posts=_safeNum(d.posts);
+  var eng=parseFloat(String(d.engagement||"").replace(/[^0-9.]/g,""));if(isNaN(eng))eng=0;
+  var adsPct=Math.min(100,Math.round((ads/_maxAds)*100));var postsPct=Math.min(100,Math.round((posts/_maxPosts)*100));var engPct=_maxEng>0?Math.min(100,Math.round((eng/_maxEng)*100)):0;
+  var avgAdsPct=Math.min(100,Math.round((_mktAvgAds/_maxAds)*100));var avgPostsPct=Math.min(100,Math.round((_mktAvgPosts/_maxPosts)*100));var avgEngPct=_maxEng>0?Math.min(100,Math.round((_mktAvgEng/_maxEng)*100)):0;
+  var adsDiff=Math.round((ads-_mktAvgAds)*10)/10;var postsDiff=Math.round((posts-_mktAvgPosts)*10)/10;var engDiff=Math.round((eng-_mktAvgEng)*10)/10;
+  function diffBadge(diff){if(diff>0)return '<span style="font-size:9px;font-weight:600;color:#059669;background:#f0fdf4;padding:1px 6px;border-radius:10px;border:1px solid #bbf7d0">+'+diff+' vs avg</span>';if(diff<0)return '<span style="font-size:9px;font-weight:600;color:#94a3b8;background:#f8fafc;padding:1px 6px;border-radius:10px;border:1px solid #e2e8f0">'+diff+' vs avg</span>';return '<span style="font-size:9px;font-weight:600;color:#94a3b8;background:#f8fafc;padding:1px 6px;border-radius:10px;border:1px solid #e2e8f0">= avg</span>';}
+  function actBar(label,val,pct,color,avgPct,diffHtml){return '<div style="margin-bottom:10px;padding-top:16px"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px"><span style="font-size:11px;font-weight:600;color:#374151">'+label+'</span><span style="font-size:11px;font-weight:700;color:'+color+'">'+val+" "+diffHtml+'</span></div><div style="position:relative;height:20px;background:#f1f5f9;border-radius:5px;overflow:visible"><div style="position:absolute;top:0;left:0;height:100%;width:'+Math.max(3,pct)+"%;background:"+color+';border-radius:5px;opacity:.85"></div><div style="position:absolute;top:-3px;height:26px;width:2px;background:#94a3b8;left:'+avgPct+'%;z-index:2" title="Market average"></div><div style="position:absolute;top:-14px;left:'+avgPct+'%;transform:translateX(-50%);font-size:8px;color:#94a3b8;white-space:nowrap">avg</div></div></div>';}
+
+  var dnaCats=_safeArr(d._precomputed_dna);
+  var brandDnaHtml="";
+  if(dnaCats.length<2){
+    var dnaReason=ads===0&&posts<=2?"This competitor has no paid ads and very few organic posts.":ads===0?"No paid ad data. USP analysis limited to organic content.":"Limited keyword diversity in content.";
+    brandDnaHtml='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin-bottom:8px;display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:3px;background:#7c3aed;display:inline-flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg></div>Brand DNA — USP Focus</div><div style="font-size:11px;color:#94a3b8;line-height:1.5;padding:8px 0"><span style="font-weight:600;color:#64748b">Insufficient data for Brand DNA chart.</span><br>'+dnaReason+'</div></div>';
+  }else{
+    var totalScore=dnaCats.reduce(function(s,c){return s+_safeNum(c.score);},0)||1;
+    var dnaBarHtml="";
+    dnaCats.forEach(function(cat,i){
+      var pct=Math.round((_safeNum(cat.score)/totalScore)*100);
+      dnaBarHtml+=buildHBar(cat.label||"Unknown",pct,DARK_BLUES[i%DARK_BLUES.length],pct+"%");
+    });
+    brandDnaHtml='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:3px;background:#7c3aed;display:inline-flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 3v9l5 3"/></svg></div>Brand DNA — USP Focus</div>'+dnaBarHtml+'</div>';
+  }
+
+  var prePromo=_safeArr(d._precomputed_promo_mix);
+  var promoHtml="";
+  if(prePromo.length){
+    var promoMaxVal=Math.max.apply(null,prePromo.map(function(p){return _safeNum(p.count);}).concat([1]));
+    prePromo.forEach(function(pm){var pw=Math.max(20,Math.round((_safeNum(pm.count)/promoMaxVal)*100));promoHtml+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px"><div style="width:clamp(70px,22%,88px);font-size:10px;font-weight:500;color:#374151;flex-shrink:0">'+esc(pm.label||"Unknown")+'</div><div style="flex:1;height:16px;background:#f1f5f9;border-radius:4px;overflow:hidden"><div style="width:'+pw+"%;height:100%;background:"+(pm.color||"#2563eb")+';border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:800;color:#fff;letter-spacing:0.2px"></div></div><div style="width:14px;font-size:11px;font-weight:800;color:#0d1b2a;text-align:right;flex-shrink:0">'+_safeNum(pm.count)+"</div></div>";});
+  }else{
+    var promoReason=ads===0?"No paid ads — promotion data extracted from ad campaigns.":"No explicit promotion mechanics found in ad copy.";
+    promoHtml='<div style="font-size:11px;color:#94a3b8;line-height:1.5;padding:8px 0"><span style="font-weight:600;color:#64748b">No promotions detected.</span><br>'+promoReason+'</div>';
+  }
+
+  var html='<div style="padding:14px 16px;border-top:1px solid #f1f5f9;background:white">';
+  html+='<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#94a3b8;margin-bottom:12px">▶ Visual Intelligence</div>';
+  html+='<div class="dp-charts-grid">';
+  html+='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px">';
+  html+='<div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin-bottom:14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div style="width:14px;height:14px;border-radius:3px;background:#2563eb;display:inline-flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>Activity Balance <span style="font-weight:400;color:#cbd5e1;margin-left:4px">vs market average</span></div>';
+  html+=actBar("Paid Ads",ads,adsPct,"#2563eb",avgAdsPct,diffBadge(adsDiff));
+  html+=actBar("Organic Posts",posts,postsPct,"#0891b2",avgPostsPct,diffBadge(postsDiff));
+  html+=actBar("Avg Engagement",eng>0?eng.toFixed(1):"N/A",engPct,"#d97706",avgEngPct,eng>0?diffBadge(engDiff):"");
+  html+="</div>";
+  html+=brandDnaHtml;
+  html+='<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px 16px"><div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;border-radius:3px;background:#d97706;display:inline-flex;align-items:center;justify-content:center"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z"/></svg></div>Promotion Mix</div>'+promoHtml+"</div>";
+  html+="</div></div>";
+  return html;
+}
+
+DD.forEach(function(d){
+  if(!d||!d.name)return;
+  var card=document.createElement("div");card.className="dp-card";
+  var bp=d.business_positioning||{};var threat=(d.threatLevel||"").toLowerCase();
+  var threatBadge=threat?'<span class="dp-threat-badge '+esc(threat)+'">'+esc(d.threatLevel)+' Threat</span>':"";
+  var adsCount=_safeNum(d.ads||d.total_ads);var postCount=_safeNum(d.posts||d.total_posts);
+  var tierLabel=d.tier||bp.tier||"";var ctaLabel=d.cta_path&&d.cta_path!=="no-ads"?d.cta_path.replace(/-/g," "):"";
+  var visRow='<div class="dp-vis-row"><span class="dp-chip ads">📢 '+adsCount+' Ads</span><span class="dp-chip posts">📄 '+postCount+' Posts</span>'+(tierLabel?'<span class="dp-chip-sep"></span><span class="dp-chip tier">'+esc(tierLabel)+"</span>":"")+(ctaLabel?'<span class="dp-chip cta">→ '+esc(ctaLabel)+"</span>":"")+"</div>";
+  var tableRows="<tr><td>Key USP</td><td>"+esc(d.usp_en||d.usp||"—")+"</td></tr><tr><td>Strategy</td><td>"+esc(d.strategy_en||"—")+"</td></tr><tr><td>Who They Target</td><td>"+esc(d.target_en||d.target||"—")+"</td></tr>";
+
+
+var ssHtml = '';
+if (d.screenshot_url) {
+  var ssId = 'ss_' + Math.random().toString(36).substr(2, 9);
+  ssHtml = '<div style="padding:16px 18px;border-top:1px solid var(--smoke);background:var(--off);page-break-inside:avoid;break-inside:avoid">' +
+    '<div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--mist);margin-bottom:10px;display:flex;align-items:center;gap:6px">' +
+    '<span style="color:var(--gold)">📸</span> Meta Ads Library Snapshot</div>' +
+    '<div id="' + ssId + '" class="dp-ss-wrap" style="border:1px solid var(--smoke);border-radius:var(--rlg);overflow:hidden;background:var(--white);min-height:120px;position:relative;display:flex;align-items:center;justify-content:center">' +
+    '<img class="dp-ss-img" src="' + esc(d.screenshot_url) + '" alt="' + esc(d.name) + ' ads" ' +
+    'style="width:100%;height:auto;display:block" ' +
+    'crossorigin="anonymous" referrerpolicy="no-referrer">' +
+    '<div class="dp-ss-fallback" style="display:none;padding:32px;text-align:center;color:#7a93ad;font-size:11px;font-style:italic">Screenshot unavailable — view in Ads Library</div>' +
+    '</div>' +
+    (d.ads_library_screenshot_url ? '<div style="margin-top:8px;font-size:10px"><a class="fb-link" href="' + esc(d.ads_library_screenshot_url) + '" target="_blank">🔗 Open filtered Ads Library →</a></div>' : '') +
+    '</div>';
+}
+
+  card.innerHTML='<div class="dp-header"><div class="dp-name">'+esc(d.name)+'</div><div class="dp-threat">'+threatBadge+"</div></div>"+visRow+'<table class="dp-table">'+tableRows+"</table>"+'<div style="padding:8px 14px;border-top:1px solid var(--smoke);background:var(--off)"><a class="fb-link" href="'+esc(d.fb||"#")+'" target="_blank">→ View in Facebook Ads Library</a></div>'+buildVisualIntel(d)+ssHtml;
+  dpContainer.appendChild(card);
+});
+// Wire up screenshot error fallback (added after DD.forEach loop)
+document.querySelectorAll('.dp-ss-img').forEach(function(img){
+  img.addEventListener('error', function(){
+    this.parentElement.innerHTML = '<div style="padding:24px;text-align:center;color:#7a93ad;font-size:11px">Screenshot unavailable</div>';
+  });
+});
+// ===== CHARTS (Chart.js) — ALL USING DARK_BLUES =====
+window.addEventListener("load",function(){
+  if(typeof ChartDataLabels!=="undefined"){Chart.register(ChartDataLabels);Chart.defaults.set("plugins.datalabels",{display:false});}
+
+  // Participation donut
+  var partActive=_safeNum(KPIS.active_advertisers);var partInactive=_safeNum(KPIS.inactive_advertisers);var partPct=_safeNum(KPIS.active_pct);
+  if(partActive+partInactive>0){
+    new Chart(document.getElementById("ch_participation"),{type:"doughnut",data:{labels:["Running Ads ("+partPct+"%)","No Ads ("+(100-partPct)+"%)"],datasets:[{data:[partActive,partInactive],backgroundColor:["#185fa5","#d6eafc"],borderWidth:2,borderColor:"#fff",hoverOffset:4}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.label;}}},datalabels:{display:true,color:function(ctx){return ctx.dataIndex===0?"#fff":"#3d5470";},font:{weight:"bold",size:13},formatter:function(val,ctx){var total=ctx.dataset.data.reduce(function(s,v){return s+v;},0);return total>0?Math.round(val/total*100)+"%":"";}}},cutout:"65%"}});
+  }
+
+  // Strategy bar — DARK_BLUES
+  var strats=_safeArr(CH.strategy_chart).filter(function(s){return _safeNum(s.count)>0;}).slice(0,10);
+  if(strats.length){new Chart(document.getElementById("ch_strategies"),{type:"bar",data:{labels:strats.map(function(s){return s.name;}),datasets:[{data:strats.map(function(s){return s.count;}),backgroundColor:strats.map(function(_,i){return DARK_BLUES[i%DARK_BLUES.length];}),borderRadius:4,borderSkipped:false}]},options:{indexAxis:"y",responsive:true,layout:{padding:{right:36}},plugins:{legend:{display:false},datalabels:{display:true,anchor:"end",align:"end",color:"#3d5470",font:{weight:"600",size:11},formatter:function(v){return v>0?v.toFixed(1):"";}}},scales:{x:{display:false,beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:11,weight:"500"}}}}}});}
+
+  // Post categories bar — DARK_BLUES + names-table
+  var postCats=_safeArr(CH.post_categories).map(function(c){return{label:c.name||c.category,val:_safeNum(c.weighted_total||c.total),names:_safeArr(c.names),competitors:_safeNum(c.competitors)};}).filter(function(c){return c.val>0;}).sort(function(a,b){return b.val-a.val;});
+  if(postCats.length){
+    new Chart(document.getElementById("ch_postcats"),{type:"bar",data:{labels:postCats.map(function(c){return c.label;}),datasets:[{data:postCats.map(function(c){return c.val;}),backgroundColor:postCats.map(function(_,i){return DARK_BLUES[i%DARK_BLUES.length];}),borderWidth:0,borderRadius:4,borderSkipped:false}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,layout:{padding:{right:36}},plugins:{legend:{display:false},datalabels:{display:true,anchor:"end",align:"end",color:"#3d5470",font:{weight:"600",size:11},formatter:function(val){return val>0?val.toFixed(1):"";}}},scales:{x:{display:false,beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:11,weight:"500"},color:"#3d5470"}}}}});
+
+    var pcNamesEl=document.createElement("div");
+    var pcRows=postCats.slice(0,8).filter(function(c){return c.names&&c.names.length;});
+    if(pcRows.length){
+      var tbl='<table class="names-table"><thead><tr><th>Category</th><th>Competitors</th></tr></thead><tbody>';
+      pcRows.forEach(function(c){
+        tbl+='<tr><td class="nt-label">'+esc(c.label)+'</td><td><div style="display:flex;flex-wrap:wrap;gap:4px">'+c.names.map(function(n){return '<span class="chart-name-tag">'+esc(shortName(n))+'</span>';}).join('')+'</div></td></tr>';
+      });
+      tbl+='</tbody></table>';
+      pcNamesEl.innerHTML=tbl;
+    }
+    document.getElementById("ch_postcats").parentElement.parentElement.appendChild(pcNamesEl);
+  }
+
+  // CTA bar — DARK_BLUES + names-table
+  var SA=RD.strategic_analysis||{};
+  (function(){
+    var ctaDist=SA.cta_distribution||{};
+    var ctaEntries=[];
+    for(var path in ctaDist){
+      if(!ctaDist.hasOwnProperty(path))continue;
+      ctaEntries.push({label:path.replace(/-/g," ").replace(/^\w/,function(c){return c.toUpperCase();}),count:_safeNum(ctaDist[path].count),names:_safeArr(ctaDist[path].competitors)});
+    }
+    ctaEntries.sort(function(a,b){return b.count-a.count;});
+    if(ctaEntries.length>0){
+      new Chart(document.getElementById("ch_cta"),{type:"bar",data:{labels:ctaEntries.map(function(e){return e.label;}),datasets:[{data:ctaEntries.map(function(e){return e.count;}),backgroundColor:DARK_BLUES.slice(0,ctaEntries.length),borderRadius:5,borderSkipped:false}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},datalabels:{display:true,anchor:"center",align:"center",color:"#ffffff",font:{weight:"700",size:11},formatter:function(v){return v>0?v+" comp"+(v>1?"s":""):""}}},scales:{x:{display:false,beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:11,weight:"500"},color:"#3d5470"}}}}});
+
+      var ctaNamesEl=document.createElement("div");
+      var ctaRows=ctaEntries.filter(function(e){return e.names&&e.names.length;});
+      if(ctaRows.length){
+        var ctaTbl='<table class="names-table"><thead><tr><th>CTA Channel</th><th>Competitors</th></tr></thead><tbody>';
+        ctaRows.forEach(function(e){
+          ctaTbl+='<tr><td class="nt-label">'+esc(e.label)+'</td><td><div style="display:flex;flex-wrap:wrap;gap:4px">'+e.names.map(function(n){return '<span class="chart-name-tag">'+esc(shortName(n))+'</span>';}).join('')+'</div></td></tr>';
+        });
+        ctaTbl+='</tbody></table>';
+        ctaNamesEl.innerHTML=ctaTbl;
+      }
+      document.getElementById("ch_cta").parentElement.appendChild(ctaNamesEl);
+    }
+  })();
+});
+</script>
+</body>
+</html>
